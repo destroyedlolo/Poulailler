@@ -7,7 +7,7 @@
  *	
  *	History :
  *	25/10/2017 - Temperature probe only
- *	12/11/2017 - Switch to OWLib
+ *	12/11/2017 - Switch to OWBus
  */
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
@@ -18,14 +18,16 @@ extern "C" {
 
 	/******
 	 * Parameters
+	 *
+	 *	Comment or uncomment to activate or disable some optionnal parts.
 	 ******/
 
 #define DEV_ONLY	/* Developpment only code */
 /*#define STATIC_IP*/	/* Use static IP when on domestik network */
+/*#define LED_BUILTIN 2*/	/* Workaround for my ESP-12 */
 
-	/* LED */
-// #define LED_BUILTIN 2	// On my ESP-12
-#if 1					// Led is lightning during Wifi / Mqtt connection establishment
+	/* If enabled, use internal LED for debugging purposes */
+#if 1		// Led is lightning during Wifi / Mqtt connection establishment
 #	define LED(x)	{ digitalWrite(LED_BUILTIN, x); }
 #else
 #	define LED(x)	{ }
@@ -35,16 +37,17 @@ extern "C" {
 #include "Maison.h"		// My very own environment (WIFI_*, MQTT_*, ...)
 
 #ifdef STATIC_IP
-IPAddress adr_ip(192, 168, 0, 17);	// Static IP to avoid DHCP delay
+	/* Static IP to avoid DHCP querying delay */
+IPAddress adr_ip(192, 168, 0, 17);
 IPAddress adr_gateway(192, 168, 0, 10);
 IPAddress adr_dns(192, 168, 0, 3);
 #endif
 
 	/* MQTT */
 #define MQTT_CLIENT "Poulailler"
-String MQTT_Topic("Poulailler/");	// Topic root
+String MQTT_Topic("Poulailler/");	// Topic's root
 
-	/* Delais */
+	/* Delays */
 #define DELAY	300				// Delay in seconds b/w samples (5 minutes)
 #define DELAY_STARTUP	5		// Let a chance to enter in interactive mode at startup ( 5s )
 #define DELAY_LIGHT 500			// Delay during light sleep (in ms - 0.5s )
@@ -203,9 +206,9 @@ void publishData(){
 	Duration owd;
 	bus.launchTemperatureAcquisition( true );	// Launch in parallel temperature acquisition
 	delay(1e3);	// Wait a second to let all conversion to finish
-	for(int i=0; i < sizeof(probes)/sizeof(*probes); i++){
+	for(unsigned int i=0; i < sizeof(probes)/sizeof(*probes); i++){
 		if( probes[i]->getOWCapability() & OWDevice::OWCapabilities::TEMPERATURE ){
-			DS18B20 *p = static_cast <DS18B20 *> (probes[i]);
+			DS18B20 *p = reinterpret_cast <DS18B20 *> (probes[i]);
 			String t = String(p->readLastTemperature());
 			clientMQTT.publish( (MQTT_Topic + p->getName()).c_str(), t.c_str() );
 			Serial.print( p->getName() + " : " + t + " / " );

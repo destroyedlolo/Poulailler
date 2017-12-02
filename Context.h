@@ -20,7 +20,7 @@ private:
 		uint32_t crc = 0xffffffff;
 
 		const uint8_t *data = (const uint8_t *)&(rtcData.dt);
-		for(int i=0; i<sizeof(rtcData.dt); i++){
+		for(unsigned int i=0; i<sizeof(rtcData.dt); i++){
 			uint8_t c = *data++;
 			for (uint32_t i = 0x80; i > 0; i >>= 1) {
 				bool bit = crc & 0x80000000;
