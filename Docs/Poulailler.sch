@@ -1,0 +1,329 @@
+EESchema Schematic File Version 2
+LIBS:maxim
+LIBS:power
+LIBS:device
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:ESP8266
+LIBS:sensors
+LIBS:Poulailler-cache
+EELAYER 25 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L ESP-201 U?
+U 1 1 5A232C39
+P 6000 3250
+F 0 "U?" H 6000 3150 50  0000 C CNN
+F 1 "ESP-201" H 6000 3350 50  0000 C CNN
+F 2 "" H 6000 3250 50  0001 C CNN
+F 3 "" H 6000 3250 50  0001 C CNN
+	1    6000 3250
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7150 3150 7250 3150
+Wire Wire Line
+	7250 3150 7250 3350
+Wire Wire Line
+	7250 3350 7150 3350
+Text Label 7300 3400 0    60   ~ 0
+DeepSleep
+Text GLabel 4200 2150 1    60   Input ~ 0
++3,3
+Wire Wire Line
+	4200 3750 4850 3750
+Wire Wire Line
+	4850 3750 4850 3650
+$Comp
+L R R1
+U 1 1 5A232E92
+P 4350 2850
+F 0 "R1" V 4430 2850 50  0001 C CNN
+F 1 "4.7k" V 4350 2850 50  0000 C CNN
+F 2 "" V 4280 2850 50  0000 C CNN
+F 3 "" H 4350 2850 50  0000 C CNN
+	1    4350 2850
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4500 2850 4850 2850
+Wire Wire Line
+	4200 2150 4200 3750
+Connection ~ 4200 2850
+Text GLabel 4550 2150 1    60   Input ~ 0
+1-wire
+Connection ~ 4550 2850
+$Comp
+L Earth #PWR?
+U 1 1 5A233B1C
+P 8100 4450
+F 0 "#PWR?" H 8100 4200 50  0001 C CNN
+F 1 "Earth" H 8100 4300 50  0001 C CNN
+F 2 "" H 8100 4450 50  0000 C CNN
+F 3 "" H 8100 4450 50  0000 C CNN
+	1    8100 4450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7150 3650 7150 3750
+Wire Wire Line
+	7150 3750 8100 3750
+Wire Wire Line
+	8100 2750 8100 4450
+$Comp
+L R R2
+U 1 1 5A233B95
+P 7950 2750
+F 0 "R2" V 8030 2750 50  0000 C CNN
+F 1 "10k" V 7950 2750 50  0000 C CNN
+F 2 "" V 7880 2750 50  0000 C CNN
+F 3 "" H 7950 2750 50  0000 C CNN
+	1    7950 2750
+	0    1    1    0   
+$EndComp
+Connection ~ 8100 3750
+Wire Wire Line
+	7150 2750 7800 2750
+$Comp
+L R R?
+U 1 1 5A233F0D
+P 4350 2750
+F 0 "R?" V 4430 2750 50  0001 C CNN
+F 1 "10k" V 4350 2750 50  0000 C CNN
+F 2 "" V 4280 2750 50  0000 C CNN
+F 3 "" H 4350 2750 50  0000 C CNN
+	1    4350 2750
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4500 2750 4850 2750
+$Comp
+L DS28EA00 U?
+U 1 1 5A233EEF
+P 3550 2700
+F 0 "U?" H 3300 2950 50  0001 C CNN
+F 1 "DS28EA00" H 3800 2950 50  0000 C CNN
+F 2 "Housings_SSOP:MSOP-8_3x3mm_Pitch0.65mm" H 2550 2450 50  0001 C CNN
+F 3 "" H 3300 2950 50  0001 C CNN
+	1    3550 2700
+	-1   0    0    -1  
+$EndComp
+Connection ~ 4550 2600
+Connection ~ 4200 2400
+Wire Wire Line
+	3950 2600 4550 2600
+Wire Wire Line
+	4200 2400 3550 2400
+$Comp
+L R R?
+U 1 1 5A234A19
+P 3000 2800
+F 0 "R?" V 3080 2800 50  0001 C CNN
+F 1 "1.8k" V 3000 2800 50  0000 C CNN
+F 2 "" V 2930 2800 50  0000 C CNN
+F 3 "" H 3000 2800 50  0000 C CNN
+	1    3000 2800
+	0    1    1    0   
+$EndComp
+$Comp
+L Q_PNP_ECB Q1
+U 1 1 5A234AEE
+P 2650 2800
+F 0 "Q1" H 2950 2850 50  0000 R CNN
+F 1 "Q_PNP_ECB" H 3250 2750 50  0001 R CNN
+F 2 "" H 2850 2900 50  0000 C CNN
+F 3 "" H 2650 2800 50  0000 C CNN
+	1    2650 2800
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	2550 3000 2550 4500
+Wire Wire Line
+	2550 3150 4200 3150
+Connection ~ 4200 3150
+$Comp
+L Earth #PWR?
+U 1 1 5A234C00
+P 4100 4250
+F 0 "#PWR?" H 4100 4000 50  0001 C CNN
+F 1 "Earth" H 4100 4100 50  0001 C CNN
+F 2 "" H 4100 4250 50  0000 C CNN
+F 3 "" H 4100 4250 50  0000 C CNN
+	1    4100 4250
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4100 3000 4100 4250
+Wire Wire Line
+	2450 3000 4100 3000
+$Comp
+L CONN_01X03 LightDetector
+U 1 1 5A234CAC
+P 2450 2050
+F 0 "LightDetector" H 2450 2250 50  0001 C CNN
+F 1 "Light detector" V 2550 2050 50  0000 C CNN
+F 2 "" H 2450 2050 50  0000 C CNN
+F 3 "" H 2450 2050 50  0000 C CNN
+	1    2450 2050
+	0    -1   -1   0   
+$EndComp
+Text Notes 2650 2250 1    60   ~ 0
+Vcc
+Text Notes 2300 2250 1    60   ~ 0
+D0
+Wire Wire Line
+	2550 2250 2550 2600
+Wire Wire Line
+	2350 2250 2350 2300
+Wire Wire Line
+	2350 2300 4050 2300
+Wire Wire Line
+	4050 2300 4050 2800
+Wire Wire Line
+	4050 2800 3950 2800
+Wire Wire Line
+	2450 2250 2450 3000
+Connection ~ 3550 3000
+$Comp
+L DS18B20 U?
+U 1 1 5A23579A
+P 2550 4800
+F 0 "U?" H 2400 5050 50  0001 C CNN
+F 1 "DS18B20" H 2800 5050 50  0000 C CNN
+F 2 "TO_SOT_Packages_THT:TO-92_Inline_Narrow_Oval" H 1550 4550 50  0001 C CNN
+F 3 "" H 2400 5050 50  0001 C CNN
+	1    2550 4800
+	1    0    0    -1  
+$EndComp
+Connection ~ 2550 3150
+Wire Notes Line
+	1550 4350 3500 4350
+Wire Notes Line
+	3500 4350 3500 5500
+Text Notes 1450 4500 0    60   ~ 0
+Water tank
+Connection ~ 2550 3000
+Wire Wire Line
+	2850 4800 2850 4250
+Wire Wire Line
+	2850 4250 2600 4250
+Wire Wire Line
+	2600 4250 2600 3250
+Wire Wire Line
+	2600 3250 4550 3250
+Wire Wire Line
+	4550 3250 4550 2150
+Wire Wire Line
+	2550 5100 2900 5100
+Wire Wire Line
+	2900 5100 2900 4200
+Wire Wire Line
+	2900 4200 2650 4200
+Wire Wire Line
+	2650 4200 2650 3300
+Wire Wire Line
+	2650 3300 4100 3300
+Connection ~ 4100 3300
+$Comp
+L Q_PNP_ECB Q?
+U 1 1 5A235AC1
+P 3200 3750
+F 0 "Q?" H 3500 3800 50  0000 R CNN
+F 1 "Q_PNP_ECB" H 3800 3700 50  0000 R CNN
+F 2 "" H 3400 3850 50  0000 C CNN
+F 3 "" H 3200 3750 50  0000 C CNN
+	1    3200 3750
+	-1   0    0    1   
+$EndComp
+$Comp
+L R R?
+U 1 1 5A235D39
+P 3550 3750
+F 0 "R?" V 3630 3750 50  0001 C CNN
+F 1 "1.8k" V 3550 3750 50  0000 C CNN
+F 2 "" V 3480 3750 50  0000 C CNN
+F 3 "" H 3550 3750 50  0000 C CNN
+	1    3550 3750
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	4650 2750 4650 3400
+Wire Wire Line
+	4650 3400 3700 3400
+Wire Wire Line
+	3700 3400 3700 3750
+Connection ~ 4650 2750
+$Comp
+L R Rwarm
+U 1 1 5A235D7E
+P 3100 4650
+F 0 "Rwarm" V 3180 4650 50  0000 C CNN
+F 1 "R" V 3100 4650 50  0001 C CNN
+F 2 "" V 3030 4650 50  0000 C CNN
+F 3 "" H 3100 4650 50  0000 C CNN
+	1    3100 4650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3100 3950 3100 4500
+Wire Wire Line
+	3100 4800 3350 4800
+Wire Wire Line
+	3350 4800 3350 4000
+Wire Wire Line
+	1850 4000 4100 4000
+Connection ~ 4100 4000
+$Comp
+L Battery PhotoVoltaic
+U 1 1 5A236034
+P 1850 3850
+F 0 "PhotoVoltaic" H 1950 3900 50  0000 L CNN
+F 1 "Battery" H 1950 3800 50  0001 L CNN
+F 2 "" V 1850 3890 50  0000 C CNN
+F 3 "" V 1850 3890 50  0000 C CNN
+	1    1850 3850
+	-1   0    0    -1  
+$EndComp
+Connection ~ 3350 4000
+Wire Wire Line
+	1850 3700 1850 3550
+Wire Wire Line
+	1850 3550 3100 3550
+$EndSCHEMATC
