@@ -1,4 +1,4 @@
-update=dim. 03 déc. 2017 17:38:04 CET
+update=dim. 03 déc. 2017 21:13:35 CET
 version=1
 last_client=kicad
 [pcbnew]
@@ -27,7 +27,7 @@ NetIExt=net
 version=1
 [eeschema]
 version=1
-LibDir=/usr/local/share/kicad/kicad-ESP8266
+LibDir=/usr/local/share/kicad/kicad-ESP8266;/usr/local/share/kicad/kicad-library/library
 [eeschema/libraries]
 LibName1=kicad/kicad-library/library/maxim
 LibName2=power
@@ -61,3 +61,5 @@ LibName29=valves
 LibName30=ESP8266
 LibName31=kicad/kicad-library/library/sensors
 LibName32=kicad/kicad-library/library/device
+LibName33=Switch
+LibName34=Motor
