@@ -11,6 +11,13 @@ Automatisation de mon poulailler.
 * Autonomous but ...
 * ... connected to my home dashboard : wakeup consign, display critical figures on my dashboard and raise alarm in case of trouble.
 
+## ESP8266 GPIO
+
+* **ADC** : power supply monitoring (*internal*)
+* **GPIO0** : enable water warming (*low*)
+* **GPIO2** : 1-wire
+* **GPIO4** : water low (*low*)
+
 ## Door control
 
 - MX1508 H-Bridge
