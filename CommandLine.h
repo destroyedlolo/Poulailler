@@ -2,6 +2,8 @@
  *
  * 28/10/2017 First version
  */
+#ifndef COMMANDLINE_H
+#define COMMANDLINE_H	0.0100
 
 class CommandLine {
 	bool active;	// Are we in command line mode ?
@@ -17,3 +19,4 @@ public:
 
 	void loop();	// implemented in the main file
 };
+#endif

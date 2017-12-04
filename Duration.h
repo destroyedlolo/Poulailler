@@ -2,6 +2,8 @@
  *
  * 25/10/2017 First version
  */
+#ifndef DURATION_H
+#define DURATION_H
 
 class Duration {
 	unsigned long int start, stop;
@@ -12,3 +14,5 @@ class Duration {
 		unsigned long int Finished( void ){ stop = millis(); return (stop - start); }
 		unsigned long int operator *( void ){ return( (stop ? stop : millis()) - start ); }
 };
+
+#endif
