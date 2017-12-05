@@ -5,12 +5,11 @@
 #ifndef CONTEXT_H
 #define CONTEXT_H
 
-class Context {
-public:
-	enum Network { SAFE, MAISON, DOMOTIQUE  };
+#include "Network.h"
 
+class Context {
 private:
-	struct _dt : public ::Network::keep {
+	struct _dt : public Network::keep {
 	};
 
 	struct {
