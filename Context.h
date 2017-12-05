@@ -10,7 +10,7 @@ public:
 	enum Network { SAFE, MAISON, DOMOTIQUE  };
 
 private:
-	struct _dt : public Network::keep {
+	struct _dt : public ::Network::keep {
 	};
 
 	struct {
