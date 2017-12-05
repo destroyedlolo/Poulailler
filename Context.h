@@ -2,18 +2,20 @@
  *
  * 30/10/2017 First version
  */
+#ifndef CONTEXT_H
+#define CONTEXT_H
 
 class Context {
 public:
 	enum Network { SAFE, MAISON, DOMOTIQUE  };
 
 private:
+	struct _dt : public Network::keep {
+	};
+
 	struct {
 		uint32_t crc32;
-		struct {
-			enum Network which_net;
-			bool first;
-		} dt;
+		struct _dt dt;
 	} rtcData;
 
 	uint32_t crc32(){ /* from https://github.com/esp8266/Arduino/blob/master/libraries/esp8266/examples/RTCUserMemory/RTCUserMemory.ino */
@@ -47,8 +49,6 @@ public:
 		}
 
 		Serial.println("Invalid context\nReseting to default");
-		rtcData.dt.first = true;
-		rtcData.dt.which_net = /* SAFE */ MAISON;	/* Trying without hop */
 	}
 
 	void save(){
@@ -61,9 +61,13 @@ public:
 #endif
 	}
 
+/*
 	bool isfirstrun(){ return rtcData.dt.first; }
 	void hasrun() { rtcData.dt.first = false; }
 
 	void setNetwork( enum Network n ){ rtcData.dt.which_net = n; }
 	enum Network getNetwork(){ return rtcData.dt.which_net; }
+*/
 };
+
+#endif
