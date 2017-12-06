@@ -7,21 +7,17 @@
 
 #include "Network.h"
 
-class Context {
-private:
-	struct _dt : public Network::keep {
-	};
-
-	struct {
-		uint32_t crc32;
-		struct _dt dt;
-	} rtcData;
+	/*****
+	 * Notez-bien : All fields will be persisted in RTC memory
+	 *****/
+class Context : public Network {
+	uint32_t crc;
 
 	uint32_t crc32(){ /* from https://github.com/esp8266/Arduino/blob/master/libraries/esp8266/examples/RTCUserMemory/RTCUserMemory.ino */
 		uint32_t crc = 0xffffffff;
 
-		const uint8_t *data = (const uint8_t *)&(rtcData.dt);
-		for(unsigned int i=0; i<sizeof(rtcData.dt); i++){
+		const uint8_t *data = (const uint8_t *)this;
+		for(unsigned int i=0; i<sizeof(*this); i++){
 			uint8_t c = *data++;
 			for (uint32_t i = 0x80; i > 0; i >>= 1) {
 				bool bit = crc & 0x80000000;
@@ -37,9 +33,8 @@ private:
 
 public:
 	Context(){
-
-		if(ESP.rtcUserMemoryRead(0, (uint32_t*) &rtcData, sizeof(rtcData))){
-			if( rtcData.crc32 == crc32() ){
+		if(ESP.rtcUserMemoryRead(0, (uint32_t*)this, sizeof(*this))){
+			if( this->crc == crc32() ){
 #ifdef DEV_ONLY
 		Serial.println("Context CRC ok");
 #endif
@@ -48,25 +43,18 @@ public:
 		}
 
 		Serial.println("Invalid context\nReseting to default");
+		Network::init();
 	}
 
 	void save(){
-		rtcData.crc32 = crc32();
-		ESP.rtcUserMemoryWrite(0, (uint32_t*) &rtcData, sizeof(rtcData));
+		this->crc = crc32();
+		ESP.rtcUserMemoryWrite(0, (uint32_t*)this, sizeof(*this));
 #ifdef DEV_ONLY
 		Serial.println("Context saved");
 		Serial.print("RTC data size : ");
-		Serial.println(sizeof(rtcData));
+		Serial.println(sizeof(*this));
 #endif
 	}
-
-/*
-	bool isfirstrun(){ return rtcData.dt.first; }
-	void hasrun() { rtcData.dt.first = false; }
-
-	void setNetwork( enum Network n ){ rtcData.dt.which_net = n; }
-	enum Network getNetwork(){ return rtcData.dt.which_net; }
-*/
 };
 
 #endif
