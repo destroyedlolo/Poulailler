@@ -75,14 +75,30 @@ ADC_MODE(ADC_VCC);
 WiFiClient clientWiFi;
 PubSubClient clientMQTT(clientWiFi);
 
+Context context;
+
 void setup(){
 		/* Hardware configuration */
 	Serial.begin(115200);
 	delay(100);
 	pinMode(LED_BUILTIN, OUTPUT);
 
-	Porte::setup();
+	context.Porte::setup();
+	context.Porte::action();	// Restore previous movement if the ESP crashed
+
 }
 
 void loop(){
+	bool still_busy = false; // Do we have something left to do ?
+
+		/*
+		 * Actions to be done 
+		 */
+	still_busy |= context.Porte::isStillMoving();
+
+		/*
+		 * Go to sleep if nothing left to be done
+		 */
+	if(!still_busy)
+		ESP.deepSleep(DELAY * 1e6);
 }
