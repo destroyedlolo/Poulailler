@@ -6,11 +6,12 @@
 #define CONTEXT_H
 
 #include "Network.h"
+#include "Porte.h"
 
 	/*****
 	 * Notez-bien : All fields will be persisted in RTC memory
 	 *****/
-class Context : public Network {
+class Context : public Network, Porte {
 	uint32_t crc;
 
 	uint32_t crc32(){ /* from https://github.com/esp8266/Arduino/blob/master/libraries/esp8266/examples/RTCUserMemory/RTCUserMemory.ino */
@@ -44,9 +45,10 @@ public:
 
 		Serial.println("Invalid context\nReseting to default");
 		Network::init();
+		Porte::init();
 	}
 
-	void save(){
+	void save( void ){
 		this->crc = crc32();
 		ESP.rtcUserMemoryWrite(0, (uint32_t*)this, sizeof(*this));
 #ifdef DEV_ONLY

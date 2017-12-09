@@ -18,8 +18,8 @@ Automatisation de mon poulailler.
 * **GPIO2** : 1-wire
 * **GPIO4** : water low (*low*)
 * **GPIO15** : Door in stop position (*high* depend on GPIO12/13)
-* **GPIO013** : Door up
-* **GPIO012** : Door Down
+* **GPIO013** : Door up (*high*)
+* **GPIO012** : Door Down (*high*)
 
 ## DS28EA00 PIOs
 

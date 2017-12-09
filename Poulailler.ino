@@ -76,6 +76,12 @@ WiFiClient clientWiFi;
 PubSubClient clientMQTT(clientWiFi);
 
 void setup(){
+		/* Hardware configuration */
+	Serial.begin(115200);
+	delay(100);
+	pinMode(LED_BUILTIN, OUTPUT);
+
+	Porte::setup();
 }
 
 void loop(){
