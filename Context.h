@@ -11,7 +11,7 @@
 	/*****
 	 * Notez-bien : All fields will be persisted in RTC memory
 	 *****/
-class Context : public Network, Porte {
+class Context : public Network, public Porte {
 	uint32_t crc;
 
 	uint32_t crc32(){ /* from https://github.com/esp8266/Arduino/blob/master/libraries/esp8266/examples/RTCUserMemory/RTCUserMemory.ino */

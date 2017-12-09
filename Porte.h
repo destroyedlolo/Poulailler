@@ -30,7 +30,8 @@ class Porte {
 protected:
 	virtual void save( void ) = 0;	// Needed to call context's one
 
-	void init( void ){	/* Initial configuration */
+	void init( void ){	
+	/* Initial configuration */
 		this->command = Command::STOP;
 	}
 
@@ -41,7 +42,11 @@ public:
 		pinMode(GPIO::END, INPUT);
 	}
 
-	bool action( enum Command movement = Command::NONE ){	// move the door
+	bool action( enum Command movement = Command::NONE ){
+	/* Launch or stop motor movement
+	 * -> Command::NONE : restore the last movement
+	 * <- is the door moving ?
+	 */
 		if( movement != Command::NONE ){
 			this->command = movement;
 			this->save();
@@ -62,8 +67,26 @@ public:
 		}
 	}
 
-	bool isFinished( void ){	// is the door arrived to stop position
-		return digitalRead( GPIO::END );
+	bool isMoving( void ){
+		switch( this->command ){
+		case Command::OPEN :
+		case Command::CLOSE :
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	bool isStillMoving( void ){
+	/* check if the door finished its movement.
+	 * Notez-bien : thanks to electronic behind, GPIO::END is 'hight'
+	 * 	only if the motor is in movement as linked to UP and DOWN GPIOs
+	 * <-  
+	 */
+		if(digitalRead( GPIO::END ))
+			return this->action( Command::STOP );
+		else
+			return this->isMoving();
 	}
 };
 #endif
