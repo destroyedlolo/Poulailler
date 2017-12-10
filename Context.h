@@ -13,6 +13,7 @@
 	 *****/
 class Context : public Network, public Porte {
 	uint32_t crc;
+	bool fromRTC;	// Indicate if the contect came from RTC or has been cleared
 
 	uint32_t crc32(){ /* from https://github.com/esp8266/Arduino/blob/master/libraries/esp8266/examples/RTCUserMemory/RTCUserMemory.ino */
 		uint32_t crc = 0xffffffff;
@@ -33,34 +34,47 @@ class Context : public Network, public Porte {
 	}
 
 public:
+		/***
+		 * Notez-bien : Following methods are called before Serial initialised
+		 ***/
 	Context(){
 		if(ESP.rtcUserMemoryRead(0, (uint32_t*)this, sizeof(*this))){
 			if( this->crc == crc32() ){
-#ifdef DEV_ONLY
-		Serial.println("Context CRC ok");
-#endif
+				this->fromRTC = true;
 				return;
 			}
 		}
 
-		Serial.println("Invalid context\nReseting to default");
+		this->fromRTC = false;
 		Network::init();
 		Porte::init();
 
 		this->save();	// Save default configuration
 	}
 
+	void save( void ){
+		this->crc = crc32();
+		ESP.rtcUserMemoryWrite(0, (uint32_t*)this, sizeof(*this));
+	}
+
+	/********
+	 * Following must be called after serial initialisation
+	 ********/
+
 	void setup(){
 		this->Porte::setup();
 	}
 
-	void save( void ){
-		this->crc = crc32();
-		ESP.rtcUserMemoryWrite(0, (uint32_t*)this, sizeof(*this));
+	void status( void ){
 #ifdef DEV_ONLY
-		Serial.println("Context saved");
+#	ifdef SERIAL_ENABLED
+		Serial.print("Context : ");
+		Serial.println(this->fromRTC ? "from RTC" : "Cleared");
 		Serial.print("RTC data size : ");
 		Serial.println(sizeof(*this));
+#	endif
+
+		Network::status();
 #endif
 	}
 };

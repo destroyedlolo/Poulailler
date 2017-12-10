@@ -24,16 +24,20 @@ extern "C" {
 	 *	Comment or uncomment to activate or disable some optionnal parts.
 	 ******/
 
-#define DEV_ONLY	/* Developpment only code */
+#	define DEV_ONLY	/* Developpment only code */
 /*#define STATIC_IP*/	/* Use static IP when on home network */
 /*#define LED_BUILTIN 2*/	/* Workaround for my ESP-12 */
 
-	/* If enabled, use internal LED for debugging purposes */
-#if 1		// Led is lightning during Wifi / Mqtt connection establishment
+	/* If enabled, LED is lighting during network establishment 
+	 * NOTEZ-BIEN : on ESP-201 this is mutually exclusif vs serial output
+	 */
+#if 0		// Led is lightning during Wifi / Mqtt connection establishment
 #	define LED(x)	{ digitalWrite(LED_BUILTIN, x); }
 #else
 #	define LED(x)	{ }
+#	define SERIAL_ENABLED
 #endif
+
 
 	/* Network */
 #include "Maison.h"		// My very own environment (WIFI_*, MQTT_*, ...)
@@ -84,11 +88,23 @@ Context context;
 
 void setup(){
 		/* Hardware configuration */
+#ifdef SERIAL_ENABLED
 	Serial.begin(115200);
 	delay(100);
+#else
 	pinMode(LED_BUILTIN, OUTPUT);
+#endif
+
+	context.status();
+
 	clientMQTT.setServer(BROKER_HOST, BROKER_PORT);
 	context.setup();
+
+
+		/* Connect to the network */
+	LED(LOW);
+//	context.Network::connect();
+	LED(HIGH);
 
 		/* Recover potential interrupted actions */
 	context.Porte::action();	// Restore previous movement if the ESP crashed

@@ -12,10 +12,10 @@
 class Network {
 	enum NetworkMode { 
 		FAILURE = 0,	// In case of no network can be reached
-		SAFEDM, 		// Try Automation network first then home one
-		SAFEMD,			// Try Home network first then automation one
 		MAISON,			// Only one home network
-		DOMOTIQUE		// Only one Automation network
+		DOMOTIQUE,		// Only one Automation network
+		SAFEDM, 		// Try Automation network first then home one
+		SAFEMD			// Try Home network first then automation one
 	} mode, current;	// which mode is in use
 	unsigned int attempts;	// If in degraded mode, counter before recovery try
 
@@ -31,7 +31,9 @@ protected:
 		 * Notez-Bien : settings are all externally defined
 		 ***/
 	bool connectMaison( bool persistant = true ){
+#ifdef SERIAL_ENABLED
 		Serial.println("Connecting to home network");
+#endif
 
 		if( !persistant )
 			WiFi.persistent(false);
@@ -47,13 +49,17 @@ protected:
 				return true;
 			}
 			delay(500);
+#ifdef SERIAL_ENABLED
 			Serial.print(".");
+#endif
 		}
 		return false;
 	}
 
 	bool connectDomotique( bool persistant = true ){
+#ifdef SERIAL_ENABLED
 		Serial.println("Connecting to Domotique network");
+#endif
 
 		if( !persistant )
 			WiFi.persistent(false);
@@ -66,7 +72,9 @@ protected:
 				return true;
 			}
 			delay(500);
+#ifdef SERIAL_ENABLED
 			Serial.print("-");
+#endif
 		}
 		return false;
 	}
@@ -90,6 +98,17 @@ protected:
 		default:
 			return NetworkMode::FAILURE;
 		}
+	}
+
+	void status(){
+#ifdef DEV_ONLY
+#	ifdef SERIAL_ENABLED
+		Serial.print("\nNetwork\n\tmode :");
+		Serial.println( this->mode );
+		Serial.print("\tcurrent :");
+		Serial.println( this->current );
+#	endif
+#endif
 	}
 
 public:
