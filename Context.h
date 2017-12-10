@@ -46,6 +46,8 @@ public:
 		Serial.println("Invalid context\nReseting to default");
 		Network::init();
 		Porte::init();
+
+		this->save();	// Save default configuration
 	}
 
 	void save( void ){
