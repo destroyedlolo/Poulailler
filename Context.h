@@ -50,6 +50,10 @@ public:
 		this->save();	// Save default configuration
 	}
 
+	void setup(){
+		this->Porte::setup();
+	}
+
 	void save( void ){
 		this->crc = crc32();
 		ESP.rtcUserMemoryWrite(0, (uint32_t*)this, sizeof(*this));

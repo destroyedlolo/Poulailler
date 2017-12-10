@@ -53,7 +53,12 @@ String MQTT_Topic("Poulailler/");	// Topic's root
 #define DELAY	300				// Delay in seconds b/w samples (5 minutes)
 #define DELAY_STARTUP	5		// Let a chance to enter in interactive mode at startup ( 5s )
 #define DELAY_LIGHT 500			// Delay during light sleep (in ms - 0.5s )
+
+	// Network related delays
+	// Caution to respect delays if in interactive mode
 #define FAILUREDELAY	900		// Delay b/w 2 network attempt in case of failure (15 minutes)
+#define RETRYAFTERSWITCHING	12	// number of connections before trying the nominal network in case of degraded mode
+#define RETRYAFTERFAILURE	3	// number of connections before trying the nominal network in case of faillure
 
 	/* 1-wire */
 #define ONE_WIRE_BUS 2 // Where OW bus is connected to
@@ -82,10 +87,11 @@ void setup(){
 	Serial.begin(115200);
 	delay(100);
 	pinMode(LED_BUILTIN, OUTPUT);
+	clientMQTT.setServer(BROKER_HOST, BROKER_PORT);
+	context.setup();
 
-	context.Porte::setup();
+		/* Recover potential interrupted actions */
 	context.Porte::action();	// Restore previous movement if the ESP crashed
-
 }
 
 void loop(){
