@@ -23,9 +23,11 @@ protected:
 	virtual void save( void ) = 0;	// Needed to call context's one
 
 	void init( void ){ /* Initial configuration */
-		this->mode = NetworkMode::SAFEDM;
+		this->mode = NetworkMode::SAFEMD;
 		this->current = this->getNominalNetwork();
 	}
+
+	void setup( void ){}	/* Setup */
 
 		/***
 		 * Notez-Bien : settings are all externally defined

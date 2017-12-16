@@ -62,6 +62,9 @@ public:
 	 ********/
 
 	void setup(){
+	/* Hardward setup
+	 */
+		this->Network::setup();
 		this->Porte::setup();
 	}
 

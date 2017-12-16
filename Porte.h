@@ -35,13 +35,15 @@ protected:
 		this->command = Command::STOP;
 	}
 
-public:
 	static void setup( void ){
+	/* Hardware setup
+	 */
 		pinMode(GPIO::DOWN, OUTPUT);
 		pinMode(GPIO::UP, OUTPUT);
 		pinMode(GPIO::END, INPUT);
 	}
 
+public:
 	bool action( enum Command movement = Command::NONE ){
 	/* Launch or stop motor movement
 	 * -> Command::NONE : restore the last movement
