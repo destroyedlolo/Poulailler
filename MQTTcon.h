@@ -42,5 +42,11 @@ protected:
 			}
 		}
 	}
+
+	void publish( const char *topic, const char *msg ){
+		if(!clientMQTT.connected())
+			this->connect();
+		clientMQTT.publish( topic, msg );
+	}
 };
 #endif
