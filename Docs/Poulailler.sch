@@ -416,12 +416,12 @@ $EndComp
 $Comp
 L Earth #PWR?
 U 1 1 5A249F46
-P 9600 3450
-F 0 "#PWR?" H 9600 3200 50  0001 C CNN
-F 1 "Earth" H 9600 3300 50  0001 C CNN
-F 2 "" H 9600 3450 50  0001 C CNN
-F 3 "" H 9600 3450 50  0001 C CNN
-	1    9600 3450
+P 9600 4000
+F 0 "#PWR?" H 9600 3750 50  0001 C CNN
+F 1 "Earth" H 9600 3850 50  0001 C CNN
+F 2 "" H 9600 4000 50  0001 C CNN
+F 3 "" H 9600 4000 50  0001 C CNN
+	1    9600 4000
 	1    0    0    -1  
 $EndComp
 Text GLabel 7750 1000 0    60   Input ~ 0
@@ -448,6 +448,49 @@ F 3 "" H 8250 1300 50  0001 C CNN
 	1    8250 1300
 	-1   0    0    -1  
 $EndComp
+$Comp
+L DHT11 U?
+U 1 1 5A344379
+P 8750 3650
+F 0 "U?" H 8900 3900 50  0001 C CNN
+F 1 "DHT22" H 8850 3400 50  0000 C CNN
+F 2 "" H 8900 3900 50  0001 C CNN
+F 3 "" H 8900 3900 50  0001 C CNN
+	1    8750 3650
+	-1   0    0    -1  
+$EndComp
+$Comp
+L CP C?
+U 1 1 5A344984
+P 9100 3650
+F 0 "C?" H 9125 3750 50  0001 L CNN
+F 1 "100mF" V 8950 3550 50  0000 L CNN
+F 2 "" H 9138 3500 50  0001 C CNN
+F 3 "" H 9100 3650 50  0001 C CNN
+	1    9100 3650
+	-1   0    0    -1  
+$EndComp
+$Comp
+L DS28EA00 U?
+U 1 1 5A233EEF
+P 4400 2000
+F 0 "U?" H 4150 2250 50  0001 C CNN
+F 1 "DS2413" H 4650 2250 50  0000 C CNN
+F 2 "Housings_SSOP:MSOP-8_3x3mm_Pitch0.65mm" H 3400 1750 50  0001 C CNN
+F 3 "" H 4150 2250 50  0001 C CNN
+	1    4400 2000
+	-1   0    0    -1  
+$EndComp
+Text Notes 4700 1900 0    60   ~ 0
+2
+Text Notes 4700 2100 0    60   ~ 0
+4
+Text Notes 4250 2300 0    60   ~ 0
+1 & 5
+Text Notes 4300 1800 0    60   ~ 0
+No
+Text GLabel 9350 3350 1    60   Input ~ 0
++3,3
 Wire Wire Line
 	8000 2450 8100 2450
 Wire Wire Line
@@ -469,7 +512,6 @@ Wire Wire Line
 Wire Wire Line
 	5350 2050 5700 2050
 Connection ~ 5400 1900
-Connection ~ 5050 1700
 Wire Wire Line
 	4800 1900 5400 1900
 Wire Wire Line
@@ -479,12 +521,9 @@ Wire Wire Line
 Connection ~ 5500 2050
 Wire Wire Line
 	1300 2500 1300 3350
-Connection ~ 4400 1700
 Connection ~ 5050 2050
 Wire Wire Line
 	3700 2000 3700 2100
-Wire Wire Line
-	3900 1700 5050 1700
 Wire Wire Line
 	3500 1400 3500 1700
 Wire Wire Line
@@ -678,7 +717,7 @@ Wire Wire Line
 Wire Wire Line
 	9000 1100 9000 1500
 Wire Wire Line
-	9600 1100 9600 3450
+	9600 1100 9600 4000
 Wire Wire Line
 	8700 2050 8700 3050
 Connection ~ 8700 3050
@@ -688,113 +727,23 @@ Wire Wire Line
 	8400 1300 8750 1300
 Wire Wire Line
 	8750 1300 8750 2550
-$Comp
-L ESP-201 U?
-U 1 1 5A34403E
-P 2950 5850
-F 0 "U?" H 2950 5750 50  0001 C CNN
-F 1 "ESP-201" H 2950 5950 50  0000 C CNN
-F 2 "" H 2950 5850 50  0001 C CNN
-F 3 "" H 2950 5850 50  0001 C CNN
-	1    2950 5850
-	1    0    0    -1  
-$EndComp
-$Comp
-L CP C?
-U 1 1 5A344044
-P 2900 6700
-F 0 "C?" H 2925 6800 50  0001 L CNN
-F 1 "C_Dec" V 2750 6600 50  0000 L CNN
-F 2 "" H 2938 6550 50  0001 C CNN
-F 3 "" H 2900 6700 50  0001 C CNN
-	1    2900 6700
-	0    -1   -1   0   
-$EndComp
 Wire Wire Line
-	1800 6700 2750 6700
+	3900 1700 3900 1650
 Wire Wire Line
-	1800 6250 1800 6950
-Connection ~ 1800 6350
+	3900 1650 5050 1650
+Connection ~ 5050 1650
 Wire Wire Line
-	4100 6250 4100 7000
-Connection ~ 4100 6350
-$Comp
-L DHT11 U?
-U 1 1 5A344379
-P 4900 6150
-F 0 "U?" H 5050 6400 50  0001 C CNN
-F 1 "DHT22" H 5000 5900 50  0000 C CNN
-F 2 "" H 5050 6400 50  0001 C CNN
-F 3 "" H 5050 6400 50  0001 C CNN
-	1    4900 6150
-	-1   0    0    -1  
-$EndComp
-Connection ~ 4100 6700
-$Comp
-L Earth #PWR?
-U 1 1 5A34460B
-P 4100 7000
-F 0 "#PWR?" H 4100 6750 50  0001 C CNN
-F 1 "Earth" H 4100 6850 50  0001 C CNN
-F 2 "" H 4100 7000 50  0001 C CNN
-F 3 "" H 4100 7000 50  0001 C CNN
-	1    4100 7000
-	1    0    0    -1  
-$EndComp
-Text GLabel 1550 6950 0    60   Input ~ 0
-+3,3
+	8000 2850 8450 2850
 Wire Wire Line
-	5000 6700 5000 6450
+	8450 2850 8450 3650
 Wire Wire Line
-	1550 6950 3900 6950
-Connection ~ 1800 6700
+	8850 3950 9600 3950
+Connection ~ 9600 3950
 Wire Wire Line
-	3900 6950 3900 6500
+	9100 3800 9100 3950
+Connection ~ 9100 3950
 Wire Wire Line
-	4500 6500 4500 5850
+	9100 3500 9100 3350
 Wire Wire Line
-	4500 5850 5400 5850
-Connection ~ 1800 6950
-$Comp
-L CP C?
-U 1 1 5A344984
-P 5400 6150
-F 0 "C?" H 5425 6250 50  0001 L CNN
-F 1 "100mF" V 5250 6050 50  0000 L CNN
-F 2 "" H 5438 6000 50  0001 C CNN
-F 3 "" H 5400 6150 50  0001 C CNN
-	1    5400 6150
-	-1   0    0    -1  
-$EndComp
-Wire Wire Line
-	5400 5850 5400 6000
-Connection ~ 5000 5850
-Wire Wire Line
-	5400 6700 5400 6300
-Connection ~ 5000 6700
-Wire Wire Line
-	4100 6150 4600 6150
-Wire Wire Line
-	3900 6500 4500 6500
-Wire Wire Line
-	3050 6700 5400 6700
-$Comp
-L DS28EA00 U?
-U 1 1 5A233EEF
-P 4400 2000
-F 0 "U?" H 4150 2250 50  0001 C CNN
-F 1 "DS2413" H 4650 2250 50  0000 C CNN
-F 2 "Housings_SSOP:MSOP-8_3x3mm_Pitch0.65mm" H 3400 1750 50  0001 C CNN
-F 3 "" H 4150 2250 50  0001 C CNN
-	1    4400 2000
-	-1   0    0    -1  
-$EndComp
-Text Notes 4700 1900 0    60   ~ 0
-2
-Text Notes 4700 2100 0    60   ~ 0
-4
-Text Notes 4250 2300 0    60   ~ 0
-1 & 5
-Text Notes 4300 1800 0    60   ~ 0
-No
+	9100 3350 8850 3350
 $EndSCHEMATC
