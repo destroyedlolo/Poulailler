@@ -12,7 +12,6 @@
  *	05/12/2017 - Go to final version
  */
 #include <ESP8266WiFi.h>
-#include <PubSubClient.h>
 
 extern "C" {
   #include "user_interface.h"
@@ -67,9 +66,12 @@ String MQTT_Topic("Poulailler/");	// Topic's root
 	/* 1-wire */
 #define ONE_WIRE_BUS 2 // Where OW bus is connected to
 
-	/* End of configuration area
+
+
+	/****************
+	 * End of configuration area
 	 * Let's go !
-	 */
+	 *******/
 #include "Duration.h"
 #include "CommandLine.h"
 #include "Context.h"
@@ -80,9 +82,6 @@ OneWire oneWire(ONE_WIRE_BUS);	// Initialize oneWire library
 OWBus bus(&oneWire);
 
 ADC_MODE(ADC_VCC);
-
-WiFiClient clientWiFi;
-PubSubClient clientMQTT(clientWiFi);
 
 Context context;
 
@@ -96,8 +95,6 @@ void setup(){
 #endif
 
 	context.status();
-
-	clientMQTT.setServer(BROKER_HOST, BROKER_PORT);
 	context.setup();
 
 

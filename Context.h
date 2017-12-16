@@ -7,11 +7,12 @@
 
 #include "Network.h"
 #include "Porte.h"
+#include "MQTTcon.h"
 
 	/*****
 	 * Notez-bien : All fields will be persisted in RTC memory
 	 *****/
-class Context : public Network, public Porte {
+class Context : public Network, public Porte, public MQTTcon {
 	uint32_t crc;
 	bool fromRTC;	// Indicate if the contect came from RTC or has been cleared
 
@@ -46,8 +47,9 @@ public:
 		}
 
 		this->fromRTC = false;
-		Network::init();
-		Porte::init();
+		this->Network::init();
+		this->Porte::init();
+		this->MQTTcon::init();
 
 		this->save();	// Save default configuration
 	}
@@ -66,6 +68,7 @@ public:
 	 */
 		this->Network::setup();
 		this->Porte::setup();
+		this->MQTTcon::setup();
 	}
 
 	void status( void ){
