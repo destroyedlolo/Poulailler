@@ -100,7 +100,7 @@ void setup(){
 
 		/* Connect to the network */
 	LED(LOW);
-	context.Network::connect();
+	context.connect();
 	LED(HIGH);
 
 		/* Recover potential interrupted actions */

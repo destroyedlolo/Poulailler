@@ -21,5 +21,26 @@ protected:
 	void setup( void ){	/* Configuration */
 		clientMQTT.setServer(BROKER_HOST, BROKER_PORT);
 	}
+
+	void connect( void ){
+#ifdef SERIAL_ENABLED
+		Serial.println("Connecting to MQTT");
+#endif
+
+		while(!clientMQTT.connected()){
+			if(clientMQTT.connect(MQTT_CLIENT)){
+#ifdef SERIAL_ENABLED
+				Serial.println("connected");
+#endif
+				break;
+			} else {
+#ifdef SERIAL_ENABLED
+				Serial.print("Failure, rc:");
+				Serial.println(clientMQTT.state());
+#endif
+				delay(1000);	// Test dans 1 seconde
+			}
+		}
+	}
 };
 #endif

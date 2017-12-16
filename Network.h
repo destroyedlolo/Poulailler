@@ -10,6 +10,9 @@
 	 * Notez-bien : All fields will be persisted in RTC memory
 	 *****/
 class Network {
+	unsigned int attempts;	// If in degraded mode, counter before recovery try
+
+protected:
 	enum NetworkMode { 
 		FAILURE = 0,	// In case of no network can be reached
 		MAISON,			// Only one home network
@@ -17,9 +20,7 @@ class Network {
 		SAFEDM, 		// Try Automation network first then home one
 		SAFEMD			// Try Home network first then automation one
 	} mode, current;	// which mode is in use
-	unsigned int attempts;	// If in degraded mode, counter before recovery try
 
-protected:
 	virtual void save( void ) = 0;	// Needed to call context's one
 
 	void init( void ){ /* Initial configuration */
@@ -102,7 +103,7 @@ protected:
 		}
 	}
 
-	void status(){
+	void status( void ){
 #ifdef DEV_ONLY
 #	ifdef SERIAL_ENABLED
 		Serial.print("\nNetwork\n\tmode :");
@@ -125,7 +126,6 @@ public:
 		if( this->isDegraded() ){
 			if( ! --this->attempts )	// Back to nominal network
 				this->current = this->getNominalNetwork();
-//			this->save();
 		}
 
 		if( this->current == NetworkMode::MAISON ){
@@ -145,7 +145,6 @@ public:
 				this->connectMaison(false)){	// And we successfully connect to the alternate one
 					this->attempts = RETRYAFTERSWITCHING;
 					this->current = NetworkMode::MAISON;
-					this->save();
 				} else {	// Failing
 					this->attempts = RETRYAFTERFAILURE;
 					this->current = NetworkMode::FAILURE;

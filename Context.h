@@ -63,12 +63,17 @@ public:
 	 * Following must be called after serial initialisation
 	 ********/
 
-	void setup(){
+	void setup( void ){
 	/* Hardward setup
 	 */
 		this->Network::setup();
 		this->Porte::setup();
 		this->MQTTcon::setup();
+	}
+
+	void connect(){
+		if( this->Network::connect() != NetworkMode::FAILURE )
+			this->MQTTcon::connect();
 	}
 
 	void status( void ){
