@@ -43,6 +43,7 @@ protected:
 		}
 	}
 
+public:
 	void publish( const char *topic, const char *msg ){
 		if(!clientMQTT.connected())
 			this->connect();
@@ -52,5 +53,10 @@ protected:
 	void publish( String &topic, String &msg ){
 		this->publish( topic.c_str(), msg.c_str() );
 	}
+
+	void publish( String &topic, const char *msg ){
+		this->publish( topic.c_str(), msg );
+	}
+
 };
 #endif
