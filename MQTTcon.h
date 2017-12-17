@@ -48,5 +48,9 @@ protected:
 			this->connect();
 		clientMQTT.publish( topic, msg );
 	}
+
+	void publish( String &topic, String &msg ){
+		this->publish( topic.c_str(), msg.c_str() );
+	}
 };
 #endif
