@@ -48,6 +48,7 @@ public :
 
 	bool publishFigures( void ){
 		if( millis() > this->dernier && // prevent overflow
+		  this->dernier &&	// enforce 1st run
 		  millis() > this->dernier + DELAY * 1e3 ){
 			if( !this->sample() ){
 				context.publish( MQTT_Error, this->strerror() );

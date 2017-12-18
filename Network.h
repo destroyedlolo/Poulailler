@@ -21,7 +21,7 @@ protected:
 		SAFEMD			// Try Home network first then automation one
 	} mode, current;	// which mode is in use
 
-	virtual void save( void ) = 0;	// Needed to call context's one
+//	virtual void save( void ) = 0;	// Needed to call context's one
 
 	void init( void ){ /* Initial configuration */
 		this->mode = NetworkMode::SAFEMD;
@@ -47,6 +47,9 @@ protected:
 		WiFi.begin( WIFI_SSID, WIFI_PASSWORD );
 		for( int i=0; i< 240; i++ ){
 			if(WiFi.status() == WL_CONNECTED){
+#ifdef SERIAL_ENABLED
+			Serial.println("ok");
+#endif
 				if( !persistant )
 					WiFi.persistent(true);
 				return true;
@@ -70,6 +73,9 @@ protected:
 		WiFi.begin( DOMO_SSID, DOMO_PASSWORD );
 		for( int i=0; i< 240; i++ ){
 			if(WiFi.status() == WL_CONNECTED){
+#ifdef SERIAL_ENABLED
+			Serial.println("ok");
+#endif
 				if( !persistant )
 					WiFi.persistent(true);
 				return true;
@@ -152,7 +158,9 @@ public:
 			}
 		}
 
-		this->save();
+		this->status();
+//		this->save();
+//Serial.println("Sauve !");
 		return(this->current);
 	}
 };

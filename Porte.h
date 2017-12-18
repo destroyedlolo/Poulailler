@@ -28,7 +28,7 @@ class Porte {
 	};
 
 protected:
-	virtual void save( void ) = 0;	// Needed to call context's one
+//	virtual void save( void ) = 0;	// Needed to call context's one
 
 	void init( void ){	
 	/* Initial configuration */
@@ -51,7 +51,7 @@ public:
 	 */
 		if( movement != Command::NONE ){
 			this->command = movement;
-			this->save();
+//			this->save();
 		}
 	
 		digitalWrite( GPIO::DOWN, 0);

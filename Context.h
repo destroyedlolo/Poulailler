@@ -18,7 +18,7 @@ class Context : public Network, public Porte, public MQTTcon {
 	uint32_t crc;
 	bool fromRTC;	// Indicate if the contect came from RTC or has been cleared
 
-	uint32_t crc32(){ /* from https://github.com/esp8266/Arduino/blob/master/libraries/esp8266/examples/RTCUserMemory/RTCUserMemory.ino */
+	uint32_t crc32( void ){ /* from https://github.com/esp8266/Arduino/blob/master/libraries/esp8266/examples/RTCUserMemory/RTCUserMemory.ino */
 		uint32_t crc = 0xffffffff;
 
 		const uint8_t *data = (const uint8_t *)this;
@@ -57,7 +57,7 @@ public:
 	}
 
 	void save( void ){
-		this->crc = crc32();
+		this->crc = this->crc32();
 		ESP.rtcUserMemoryWrite(0, (uint32_t*)this, sizeof(*this));
 	}
 
@@ -74,8 +74,10 @@ public:
 	}
 
 	void connect(){
-		if( this->Network::connect() != NetworkMode::FAILURE )
+		if( this->Network::connect() != NetworkMode::FAILURE ){
 			this->MQTTcon::connect();
+//			this->save();
+		}
 	}
 
 	void status( void ){
