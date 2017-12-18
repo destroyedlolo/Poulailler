@@ -51,6 +51,7 @@ IPAddress adr_dns(192, 168, 0, 3);
 	/* MQTT */
 #define MQTT_CLIENT "Poulailler"
 String MQTT_Topic("Poulailler/");	// Topic's root
+String MQTT_Error = MQTT_Topic + "Message";
 
 	/* Delays */
 #define DELAY	300				// Delay in seconds b/w samples (5 minutes)
@@ -66,7 +67,8 @@ String MQTT_Topic("Poulailler/");	// Topic's root
 	/* 1-wire */
 #define ONE_WIRE_BUS 2 // Where OW bus is connected to
 
-
+	/* DHT */
+#define pinDHT 5	// Where DHT is connected to
 
 	/****************
 	 * End of configuration area
@@ -75,6 +77,8 @@ String MQTT_Topic("Poulailler/");	// Topic's root
 #include "Duration.h"
 #include "CommandLine.h"
 #include "Context.h"
+
+#include "Perchoir.h"
 
 	/* 1-wire */
 #include <OWBus.h>
@@ -114,6 +118,12 @@ void loop(){
 		 * Actions to be done 
 		 */
 	still_busy |= context.Porte::isStillMoving();
+
+		/* 
+		 * Send Perchoir's figures
+		 */
+	Perchoir perchoir( context );
+	perchoir.publishFigures();
 
 		/*
 		 * Go to sleep if nothing left to be done
