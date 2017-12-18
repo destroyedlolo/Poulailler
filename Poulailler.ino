@@ -55,6 +55,7 @@ String MQTT_Error = MQTT_Topic + "Message";
 
 	/* Delays */
 #define DELAY	300				// Delay in seconds b/w samples (5 minutes)
+#define DELAY	60
 #define DELAY_STARTUP	5		// Let a chance to enter in interactive mode at startup ( 5s )
 #define DELAY_LIGHT 500			// Delay during light sleep (in ms - 0.5s )
 
@@ -128,6 +129,10 @@ void loop(){
 		/*
 		 * Go to sleep if nothing left to be done
 		 */
-	if(!still_busy)
+	if(!still_busy){
+#	ifdef SERIAL_ENABLED
+		Serial.println("Dodo ...");
+#	endif
 		ESP.deepSleep(DELAY * 1e6);
+	}
 }

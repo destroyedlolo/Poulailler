@@ -76,14 +76,14 @@ public:
 	void connect(){
 		if( this->Network::connect() != NetworkMode::FAILURE ){
 			this->MQTTcon::connect();
-//			this->save();
+			this->save();
 		}
 	}
 
 	void status( void ){
 #ifdef DEV_ONLY
 #	ifdef SERIAL_ENABLED
-		Serial.print("Context : ");
+		Serial.print("\nContext : ");
 		Serial.println(this->fromRTC ? "from RTC" : "Cleared");
 		Serial.print("RTC data size : ");
 		Serial.println(sizeof(*this));
