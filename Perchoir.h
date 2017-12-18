@@ -15,6 +15,7 @@ class Perchoir {
 	float temperature;
 	float humidite;
 	int err;
+	unsigned long dernier;	// Last sample time
 
 	Context &context;
 
@@ -42,19 +43,29 @@ protected :
 	}
 
 public :
-	Perchoir( Context &ctx ) : temperature(0), humidite(0), err(SimpleDHTErrSuccess), context( ctx ) {
+	Perchoir( Context &ctx ) : temperature(0), humidite(0), err(SimpleDHTErrSuccess), dernier(0), context( ctx ) {
 	}
 
 	bool publishFigures( void ){
-		if( !this->sample() ){
-			context.publish( MQTT_Error, this->strerror() );
-			return false;
+		if( millis() > this->dernier && // prevent overflow
+		  millis() > this->dernier + DELAY * 1e3 ){
+			if( !this->sample() ){
+				context.publish( MQTT_Error, this->strerror() );
+#				ifdef SERIAL_ENABLED
+					Serial.print("DHT.sample() :");
+					Serial.println( this->strerror() );
+#				endif
+				return false;
+			}
+
+			String troot = MQTT_Topic + "Perchoir/";
+
+			context.publish( (troot+"Temperature").c_str(), context.toString( this->temperature ).c_str() );
+			context.publish( (troot+"Humidite").c_str(), context.toString( this->humidite ).c_str() );
+
+			this->dernier = millis();
+Serial.println( this->dernier );
 		}
-
-		String troot = MQTT_Topic + "Perchoir/";
-
-		context.publish( (troot+"Temperature").c_str(), context.toString( this->temperature ).c_str() );
-		context.publish( (troot+"Humidite").c_str(), context.toString( this->humidite ).c_str() );
 
 		return true;
 	}
