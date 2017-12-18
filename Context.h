@@ -5,6 +5,8 @@
 #ifndef CONTEXT_H
 #define CONTEXT_H
 
+#include <stdio.h>
+
 #include "Network.h"
 #include "Porte.h"
 #include "MQTTcon.h"
@@ -87,6 +89,16 @@ public:
 
 		Network::status();
 #endif
+	}
+
+
+	/********
+	 * Helpers
+	 ********/
+	String toString( float f){
+		char buff[16];
+		snprintf(buff, sizeof(buff), "%f", f);
+		return buff;
 	}
 };
 
