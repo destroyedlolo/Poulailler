@@ -29,4 +29,10 @@ Automatisation de mon poulailler.
 
 ## Door control
 
-- MX1508 H-Bridge
+* MX1508 H-Bridge
+
+## Topics
+
+* **Poulailler/Message** : various messages (errors, ...)
+* **Poulailler/Perchoir/Temperature** : as the name said
+* **Poulailler/Perchoir/Humidite** : as the name said
