@@ -19,7 +19,8 @@ class Context : public Network, public Porte, public MQTTcon {
 	bool fromRTC;	// Indicate if the contect came from RTC or has been cleared
 
 	uint32_t crc32( void ){ /* from https://github.com/esp8266/Arduino/blob/master/libraries/esp8266/examples/RTCUserMemory/RTCUserMemory.ino */
-		uint32_t crc = 0xffffffff;
+		uint32_t crc = 0xffffffff, ans_crc = this->crc;
+		this->crc = 0;	// Because initial calculation has been made without crc
 
 		const uint8_t *data = (const uint8_t *)this;
 		for(unsigned int i=0; i<sizeof(*this); i++){
@@ -33,6 +34,8 @@ class Context : public Network, public Porte, public MQTTcon {
 					crc ^= 0x04c11db7;
 			}
 		}
+
+		this->crc = ans_crc;
 		return crc;
 	}
 
@@ -40,9 +43,9 @@ public:
 		/***
 		 * Notez-bien : Following methods are called before Serial initialised
 		 ***/
-	Context(){
+	Context() : crc(0) {
 		if(ESP.rtcUserMemoryRead(0, (uint32_t*)this, sizeof(*this))){
-			if( this->crc == crc32() ){
+			if( this->crc == this->crc32() ){
 				this->fromRTC = true;
 				return;
 			}
