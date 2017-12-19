@@ -86,7 +86,7 @@ public:
 	void status( void ){
 #ifdef DEV_ONLY
 #	ifdef SERIAL_ENABLED
-		Serial.print("\nContext : ");
+		Serial.print("Context : ");
 		Serial.println(this->fromRTC ? "from RTC" : "Cleared");
 		Serial.print("RTC data size : ");
 		Serial.println(sizeof(*this));

@@ -112,7 +112,7 @@ protected:
 	void status( void ){
 #ifdef DEV_ONLY
 #	ifdef SERIAL_ENABLED
-		Serial.print("\nNetwork\n\tmode :");
+		Serial.print("Network\n\tmode :");
 		Serial.println( this->mode );
 		Serial.print("\tcurrent :");
 		Serial.println( this->current );

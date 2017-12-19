@@ -99,7 +99,11 @@ void setup(){
 	pinMode(LED_BUILTIN, OUTPUT);
 #endif
 
+#	ifdef SERIAL_ENABLED
+	Serial.println("\nInitial setup :\n----------");
 	context.status();
+#	endif
+
 	context.setup();
 
 
