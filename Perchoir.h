@@ -47,8 +47,8 @@ public :
 	}
 
 	bool publishFigures( void ){
-		if( millis() > this->dernier && // prevent overflow
-		  this->dernier &&	// enforce 1st run
+		if( millis() < this->dernier || // prevent overflow
+		  !this->dernier ||	// enforce 1st run
 		  millis() > this->dernier + DELAY * 1e3 ){
 			if( !this->sample() ){
 				context.publish( MQTT_Error, this->strerror() );
@@ -64,8 +64,14 @@ public :
 			context.publish( (troot+"Temperature").c_str(), context.toString( this->temperature ).c_str() );
 			context.publish( (troot+"Humidite").c_str(), context.toString( this->humidite ).c_str() );
 
+#			ifdef SERIAL_ENABLED
+			Serial.print("Perchoir :");
+			Serial.print(this->temperature);
+			Serial.print("° ");
+			Serial.println(this->humidite);
+#			endif
+
 			this->dernier = millis();
-Serial.println( this->dernier );
 		}
 
 		return true;
