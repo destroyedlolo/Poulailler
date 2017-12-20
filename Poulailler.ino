@@ -107,6 +107,9 @@ void setup(){
 	context.status();
 	network.status();
 #	endif
+
+	context.save();	// At least, default values have been set
+	network.connect();
 }
 
 void loop(){

@@ -46,6 +46,65 @@ private:
 		}
 	}
 
+		/***
+		 * Notez-Bien : settings are all externally defined
+		 ***/
+	bool connectMaison( bool persistant = true ){
+#ifdef SERIAL_ENABLED
+		Serial.println("Connecting to home network");
+#endif
+
+		if( !persistant )
+			WiFi.persistent(false);
+
+#	if STATIC_IP
+		WiFi.config(adr_ip, adr_gateway, adr_dns);
+#	endif
+		WiFi.begin( WIFI_SSID, WIFI_PASSWORD );
+		for( int i=0; i< 240; i++ ){
+			if(WiFi.status() == WL_CONNECTED){
+#ifdef SERIAL_ENABLED
+			Serial.println("ok");
+#endif
+				if( !persistant )
+					WiFi.persistent(true);
+				return true;
+			}
+			delay(500);
+#ifdef SERIAL_ENABLED
+			Serial.print(".");
+#endif
+		}
+		return false;
+	}
+
+	bool connectDomotique( bool persistant = true ){
+#ifdef SERIAL_ENABLED
+		Serial.println("Connecting to Domotique network");
+#endif
+
+		if( !persistant )
+			WiFi.persistent(false);
+
+		WiFi.begin( DOMO_SSID, DOMO_PASSWORD );
+		for( int i=0; i< 240; i++ ){
+			if(WiFi.status() == WL_CONNECTED){
+#ifdef SERIAL_ENABLED
+			Serial.println("ok");
+#endif
+				if( !persistant )
+					WiFi.persistent(true);
+				return true;
+			}
+			delay(500);
+#ifdef SERIAL_ENABLED
+			Serial.print("-");
+#endif
+		}
+		return false;
+	}
+
+
 public:
 	void status( void ){
 #ifdef DEV_ONLY
@@ -62,6 +121,7 @@ public:
 		if( !ctx.isValid() ){	// Default value
 			this->data.mode = NetworkMode::SAFEMD;
 			this->data.current = this->getNominalNetwork();
+			this->save();
 		}
 	}
 
@@ -71,6 +131,41 @@ public:
 	
 	void setMode( enum NetworkMode n ){ this->data.mode = n; }
 	enum NetworkMode getMode( void ){ return this->data.mode; }
+
+	enum NetworkMode connect( void ){
+		if( this->isDegraded() ){
+			if( ! --this->data.attempts )	// Back to nominal network
+				this->data.current = this->getNominalNetwork();
+		}
+
+		if( this->data.current == NetworkMode::MAISON ){
+			if( !this->connectMaison() ){
+				if( this->getAlternateNetwork() == NetworkMode::DOMOTIQUE && // we were on the nominal network
+				this->connectDomotique(false)){	// And we successfully connect to the alternate one
+					this->data.attempts = RETRYAFTERSWITCHING;
+					this->data.current = NetworkMode::DOMOTIQUE;
+				} else {	// Failing
+					this->data.attempts = RETRYAFTERFAILURE;
+					this->data.current = NetworkMode::FAILURE;
+				}
+			}
+		} else if( this->data.current == NetworkMode::DOMOTIQUE ){
+			if( !this->connectDomotique() ){
+				if( this->getAlternateNetwork() == NetworkMode::MAISON && // we were on the nominal network
+				this->connectMaison(false)){	// And we successfully connect to the alternate one
+					this->data.attempts = RETRYAFTERSWITCHING;
+					this->data.current = NetworkMode::MAISON;
+				} else {	// Failing
+					this->data.attempts = RETRYAFTERFAILURE;
+					this->data.current = NetworkMode::FAILURE;
+				}
+			}
+		}
+
+		this->status();
+		this->save();	// If network has changed
+		return(this->data.current);
+	}
 };
 
 #endif
