@@ -52,17 +52,21 @@ public:
 		uint32_t *what;
 		uint32_t size;
 		uint32_t offset;
-	public:
+
+	protected:
 		keepInRTC( Context &ctx, uint32_t *w, uint32_t s ) : what(w), size(s) {
 		/* ->	ctx : context managing the RTC memory
 		 * 		w : which data to save
 		 * 		s : size of the data to save
 		 */
-			this->offset = ctx.reserveData( s ); 
-			this->update();
+			this->offset = ctx.reserveData( s );
+
+			if(ctx.isValid())	// previous data can be retrieved
+				ESP.rtcUserMemoryRead(this->offset, this->what, this->size);
 		}
 
-		void update( void ){
+	public:
+		void save( void ){
 			ESP.rtcUserMemoryWrite( this->offset, this->what, this->size );
 		}
 	};
