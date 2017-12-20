@@ -24,10 +24,13 @@ public:
 
 	bool isValid( void ){ return RTCvalid; }
 
-
+		/* This method has to be called ONLY after all other stuffs
+		 * to be kept are saved
+		 */
 	void save( void ){
 		uint32_t key = ESP.getFlashChipId();
 		ESP.rtcUserMemoryWrite(0, &key, sizeof(key));
+		RTCvalid = true;
 	}
 
 	uint32_t reserveData( uint32_t s ){
