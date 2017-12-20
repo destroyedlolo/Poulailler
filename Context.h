@@ -8,7 +8,7 @@
 
 class Context {
 	bool RTCvalid;	// Is stored memory valid ?
-	size_t offset;	// Offset in memory for next data
+	uint32_t offset;	// Offset in memory for next data
 
 public:
 	Context() : RTCvalid(false){
@@ -24,9 +24,17 @@ public:
 
 	bool isValid( void ){ return RTCvalid; }
 
+
 	void save( void ){
 		uint32_t key = ESP.getFlashChipId();
 		ESP.rtcUserMemoryWrite(0, &key, sizeof(key));
+	}
+
+	uint32_t reserveData( uint32_t s ){
+		uint32_t start = this->offset;
+		this->offset += s;
+
+		return( start );
 	}
 
 	void status( void ){
@@ -40,6 +48,24 @@ public:
 #endif
 	}
 
+	class keepInRTC {
+		uint32_t *what;
+		uint32_t size;
+		uint32_t offset;
+	public:
+		keepInRTC( Context &ctx, uint32_t *w, uint32_t s ) : what(w), size(s) {
+		/* ->	ctx : context managing the RTC memory
+		 * 		w : which data to save
+		 * 		s : size of the data to save
+		 */
+			this->offset = ctx.reserveData( s ); 
+			this->update();
+		}
+
+		void update( void ){
+			ESP.rtcUserMemoryWrite( this->offset, this->what, this->size );
+		}
+	};
 };
 
 #endif
