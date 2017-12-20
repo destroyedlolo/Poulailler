@@ -76,9 +76,13 @@ String MQTT_Error = MQTT_Topic + "Message";
 	 * Let's go !
 	 *******/
 #include "Duration.h"
-#include "CommandLine.h"
 #include "Context.h"
+Context context;
 
+#include "Network.h"
+Network network( context );
+
+#include "CommandLine.h"
 /* #include "Perchoir.h" */
 
 	/* 1-wire */
@@ -88,7 +92,6 @@ OWBus bus(&oneWire);
 
 ADC_MODE(ADC_VCC);
 
-Context context;
 
 void setup(){
 		/* Hardware configuration */
@@ -102,6 +105,7 @@ void setup(){
 #	ifdef SERIAL_ENABLED
 	Serial.println("\nInitial setup :\n----------");
 	context.status();
+	network.status();
 #	endif
 }
 
