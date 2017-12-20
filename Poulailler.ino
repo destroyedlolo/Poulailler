@@ -79,7 +79,7 @@ String MQTT_Error = MQTT_Topic + "Message";
 #include "CommandLine.h"
 #include "Context.h"
 
-#include "Perchoir.h"
+/* #include "Perchoir.h" */
 
 	/* 1-wire */
 #include <OWBus.h>
@@ -103,32 +103,10 @@ void setup(){
 	Serial.println("\nInitial setup :\n----------");
 	context.status();
 #	endif
-
-	context.setup();
-
-
-		/* Connect to the network */
-	LED(LOW);
-	context.connect();
-	LED(HIGH);
-
-		/* Recover potential interrupted actions */
-	context.Porte::action();	// Restore previous movement if the ESP crashed
 }
 
 void loop(){
 	bool still_busy = false; // Do we have something left to do ?
-
-		/*
-		 * Actions to be done 
-		 */
-	still_busy |= context.Porte::isStillMoving();
-
-		/* 
-		 * Send Perchoir's figures
-		 */
-	Perchoir perchoir( context );
-	perchoir.publishFigures();
 
 		/*
 		 * Go to sleep if nothing left to be done
