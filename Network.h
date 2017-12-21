@@ -7,6 +7,11 @@
 #ifndef NETWORK_H
 #define NETWORK_H
 
+#include <ESP8266WiFi.h>
+#include <PubSubClient.h>
+WiFiClient clientWiFi;
+PubSubClient clientMQTT(clientWiFi);
+
 #include "Context.h"
 
 class Network : public Context::keepInRTC {
@@ -20,6 +25,7 @@ public:
 	};
 
 private:
+
 	struct {
 		unsigned int attempts;	// If in degraded mode, counter before recovery try
 		enum NetworkMode mode, current;	// which mode is in use
@@ -104,6 +110,26 @@ private:
 		return false;
 	}
 
+	void MQTTConnect( void ){
+#ifdef SERIAL_ENABLED
+		Serial.println("Connecting to MQTT");
+#endif
+
+		while(!clientMQTT.connected()){
+			if(clientMQTT.connect(MQTT_CLIENT)){
+#ifdef SERIAL_ENABLED
+				Serial.println("connected");
+#endif
+				break;
+			} else {
+#ifdef SERIAL_ENABLED
+				Serial.print("Failure, rc:");
+				Serial.println(clientMQTT.state());
+#endif
+				delay(1000);	// Test dans 1 seconde
+			}
+		}
+	}
 
 public:
 	void status( void ){
@@ -123,6 +149,7 @@ public:
 			this->data.current = this->getNominalNetwork();
 			this->save();
 		}
+		clientMQTT.setServer(BROKER_HOST, BROKER_PORT);
 	}
 
 	bool isDegraded( void ){
@@ -132,7 +159,7 @@ public:
 	void setMode( enum NetworkMode n ){ this->data.mode = n; }
 	enum NetworkMode getMode( void ){ return this->data.mode; }
 
-	enum NetworkMode connect( void ){
+	enum NetworkMode networkConnect( void ){
 		if( this->isDegraded() ){
 			if( ! --this->data.attempts )	// Back to nominal network
 				this->data.current = this->getNominalNetwork();
@@ -165,6 +192,16 @@ public:
 		this->status();
 		this->save();	// If network has changed
 		return(this->data.current);
+	}
+
+	bool connect( void ){
+		/* <- false if the network can't be connected
+		 */
+		if( this->networkConnect() == NetworkMode::FAILURE )
+			return false;
+		
+		this->MQTTConnect();
+		return true;
 	}
 };
 
