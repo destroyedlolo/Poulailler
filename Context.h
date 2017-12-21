@@ -92,13 +92,11 @@ public:
 		if(number < 0.0)
 			negative = true;
 
-#if 1	// Commented out as it produce wrong last digit
 			// Round correctly so that print(1.999, 2) prints as "2.00"
 		float rounding = 0.5;
 		for (uint8_t i=0; i<digits; ++i)
 			rounding /= 10.0;
 		number += rounding;
-#endif
 
 		unsigned long int_part = (unsigned long)number;
 		float remainder = number - (double)int_part;
