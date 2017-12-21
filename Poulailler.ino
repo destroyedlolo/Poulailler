@@ -83,7 +83,7 @@ Context context;
 Network network( context );
 
 #include "CommandLine.h"
-/* #include "Perchoir.h" */
+#include "Perchoir.h"
 
 	/* 1-wire */
 #include <OWBus.h>
@@ -116,6 +116,12 @@ void setup(){
 
 void loop(){
 	bool still_busy = false; // Do we have something left to do ?
+
+		/* 
+		 * Send Perchoir's figures
+		 */
+	Perchoir perchoir( network );
+	perchoir.publishFigures();
 
 		/*
 		 * Go to sleep if nothing left to be done
