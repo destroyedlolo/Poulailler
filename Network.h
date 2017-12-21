@@ -160,7 +160,9 @@ public:
 	enum NetworkMode getMode( void ){ return this->data.mode; }
 
 	enum NetworkMode networkConnect( void ){
-		if( this->isDegraded() ){
+		if( this->data.current == NetworkMode::FAILURE )
+			this->data.current = this->getNominalNetwork();
+		else if( this->isDegraded() ){
 			if( ! --this->data.attempts )	// Back to nominal network
 				this->data.current = this->getNominalNetwork();
 		}
