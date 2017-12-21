@@ -109,7 +109,9 @@ void setup(){
 #	endif
 
 	context.save();	// At least, default values have been set
+	LED(LOW);
 	network.connect();
+	LED(HIGH);
 }
 
 void loop(){
