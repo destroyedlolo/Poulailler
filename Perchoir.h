@@ -17,7 +17,7 @@ class Perchoir {
 	int err;
 	unsigned long dernier;	// Last sample time
 
-	Context &context;
+	Network &network;
 
 protected :
 	bool sample( void ){
@@ -43,7 +43,7 @@ protected :
 	}
 
 public :
-	Perchoir( Context &ctx ) : temperature(0), humidite(0), err(SimpleDHTErrSuccess), dernier(0), context( ctx ) {
+	Perchoir( Network &net ) : temperature(0), humidite(0), err(SimpleDHTErrSuccess), dernier(0), network( net ) {
 	}
 
 	bool publishFigures( void ){
@@ -51,7 +51,7 @@ public :
 		  !this->dernier ||	// enforce 1st run
 		  millis() > this->dernier + DELAY * 1e3 ){
 			if( !this->sample() ){
-				context.publish( MQTT_Error, this->strerror() );
+				network.publish( MQTT_Error, this->strerror() );
 #				ifdef SERIAL_ENABLED
 					Serial.print("DHT.sample() :");
 					Serial.println( this->strerror() );
@@ -61,8 +61,8 @@ public :
 
 			String troot = MQTT_Topic + "Perchoir/";
 
-			context.publish( (troot+"Temperature").c_str(), context.toString( this->temperature ).c_str() );
-			context.publish( (troot+"Humidite").c_str(), context.toString( this->humidite ).c_str() );
+			network.publish( (troot+"Temperature").c_str(), network.getContext().toString( this->temperature ).c_str() );
+			network.publish( (troot+"Humidite").c_str(), network.getContext().toString( this->humidite ).c_str() );
 
 #			ifdef SERIAL_ENABLED
 			Serial.print("Perchoir :");

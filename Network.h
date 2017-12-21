@@ -25,6 +25,7 @@ public:
 	};
 
 private:
+	Context &context;
 
 	struct {
 		unsigned int attempts;	// If in degraded mode, counter before recovery try
@@ -143,7 +144,7 @@ public:
 #endif
 	}
 
-	Network( Context &ctx ) : Context::keepInRTC( ctx, (uint32_t *)&data, sizeof(data) ){
+	Network( Context &ctx ) : context( ctx ), Context::keepInRTC( ctx, (uint32_t *)&data, sizeof(data) ){
 		if( !ctx.isValid() ){	// Default value
 			this->data.mode = NetworkMode::SAFEMD;
 			this->data.current = this->getNominalNetwork();
@@ -158,6 +159,8 @@ public:
 	
 	void setMode( enum NetworkMode n ){ this->data.mode = n; }
 	enum NetworkMode getMode( void ){ return this->data.mode; }
+
+	Context &getContext( void ){ return this->context; };
 
 	enum NetworkMode networkConnect( void ){
 		if( this->data.current == NetworkMode::FAILURE )
@@ -205,6 +208,26 @@ public:
 		this->MQTTConnect();
 		return true;
 	}
+
+
+		/******
+		 * MQTT publishing
+		 ******/
+
+	void publish( const char *topic, const char *msg ){
+		if(!clientMQTT.connected())
+			this->connect();
+		clientMQTT.publish( topic, msg );
+	}
+
+	void publish( String &topic, String &msg ){
+		this->publish( topic.c_str(), msg.c_str() );
+	}
+
+	void publish( String &topic, const char *msg ){
+		this->publish( topic.c_str(), msg );
+	}
+
 };
 
 #endif
