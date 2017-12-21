@@ -6,12 +6,15 @@
 #ifndef CONTEXT_H
 #define CONTEXT_H
 
+class Network;
+
 class Context {
 	bool RTCvalid;	// Is stored memory valid ?
 	uint32_t offset;	// Offset in memory for next data
+	class Network *net;
 
 public:
-	Context() : RTCvalid(false){
+	Context() : RTCvalid(false), net(NULL){
 			/* Check if RTC memory contains valuable data */
 		uint32_t key;
 		if(ESP.rtcUserMemoryRead(0, &key, sizeof(key))){
@@ -21,6 +24,8 @@ public:
 
 		offset = sizeof(key);
 	}
+
+	void setNetwork( Network *n ){ net = n; }
 
 	bool isValid( void ){ return RTCvalid; }
 
@@ -82,6 +87,22 @@ public:
 		snprintf(buff, sizeof(buff), "%f", f);
 		return buff;
 	}
+
+			/******
+		 * MQTT publishing
+		 ******/
+
+	void publish( const char *topic, const char *msg );
+
+	void publish( String &topic, String &msg ){
+		this->publish( topic.c_str(), msg.c_str() );
+	}
+
+	void publish( String &topic, const char *msg ){
+		this->publish( topic.c_str(), msg );
+	}
+
+
 };
 
 #endif

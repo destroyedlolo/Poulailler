@@ -82,6 +82,11 @@ Context context;
 #include "Network.h"
 Network network( context );
 
+void Context::publish( const char *topic, const char *msg ){
+	if( this->net )	// Otherwise, we're silently ignoring the publishing
+		this->net->publish( topic, msg );
+}
+
 #include "CommandLine.h"
 #include "Perchoir.h"
 
@@ -111,6 +116,7 @@ void setup(){
 	context.save();	// At least, default values have been set
 	LED(LOW);
 	network.connect();
+	context.setNetwork( &network );
 	LED(HIGH);
 }
 
@@ -120,7 +126,7 @@ void loop(){
 		/* 
 		 * Send Perchoir's figures
 		 */
-	Perchoir perchoir( network );
+	Perchoir perchoir( context );
 	perchoir.publishFigures();
 
 		/*
