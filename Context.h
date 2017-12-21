@@ -73,6 +73,15 @@ public:
 			ESP.rtcUserMemoryWrite( this->offset, this->what, this->size );
 		}
 	};
+
+	/********
+	 * Helpers
+	 ********/
+	String toString( float f){
+		char buff[16];
+		snprintf(buff, sizeof(buff), "%f", f);
+		return buff;
+	}
 };
 
 #endif
