@@ -33,6 +33,10 @@ Automatisation de mon poulailler.
 
 ## Topics
 
-* **Poulailler/Message** : various messages (errors, ...)
 * **Poulailler/Perchoir/Temperature** : as the name said
 * **Poulailler/Perchoir/Humidite** : as the name said
+
+* **Poulailler/Wifi** : time to connect to the WiFi network
+* **Poulailler/MQTT/Connection** : reconnect duration
+
+* **Poulailler/Message** : various messages (errors, ...)

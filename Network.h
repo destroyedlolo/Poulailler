@@ -13,6 +13,7 @@ WiFiClient clientWiFi;
 PubSubClient clientMQTT(clientWiFi);
 
 #include "Context.h"
+#include "Duration.h"
 
 class Network : public Context::keepInRTC {
 public:
@@ -197,11 +198,20 @@ public:
 
 	bool connect( void ){
 		/* <- false if the network can't be connected
+		 *
+		 * MQTT will connect automatically when publishing
 		 */
+
+		Duration dwifi;
 		if( this->networkConnect() == NetworkMode::FAILURE )
 			return false;
-		
-		this->MQTTConnect();
+		dwifi.Finished();
+
+#ifdef SERIAL_ENABLED
+		Serial.print("WiFi connection duration :");
+		Serial.println( *dwifi );
+#endif
+		this->publish( (MQTT_Topic + "Wifi").c_str(), String( *dwifi ).c_str() );
 		return true;
 	}
 
@@ -211,8 +221,17 @@ public:
 		 ******/
 
 	void publish( const char *topic, const char *msg ){
-		if(!clientMQTT.connected())
+		if(!clientMQTT.connected()){
+			Duration dmqtt;
 			this->MQTTConnect();
+			dmqtt.Finished();
+
+#ifdef SERIAL_ENABLED
+			Serial.print("MQTT connection duration :");
+			Serial.println( *dmqtt );
+#endif
+			clientMQTT.publish( (MQTT_Topic + "MQTT/Connection").c_str(), String( *dmqtt ).c_str() );
+		}
 		clientMQTT.publish( topic, msg );
 	}
 };
