@@ -212,7 +212,7 @@ public:
 
 	void publish( const char *topic, const char *msg ){
 		if(!clientMQTT.connected())
-			this->connect();
+			this->MQTTConnect();
 		clientMQTT.publish( topic, msg );
 	}
 };
