@@ -10,6 +10,7 @@
 #include <string>
 
 #include "Context.h"
+#include "Repeat.h"
 
 class Perchoir {
 	float temperature;
@@ -65,7 +66,6 @@ public :
 			context.publish( (troot+"Humidite").c_str(), context.toString( this->humidite ).c_str() );
 
 #			ifdef SERIAL_ENABLED
-Serial.println((troot+"Humidite").c_str());
 			Serial.print("Perchoir :");
 			Serial.print(this->temperature);
 			Serial.print("° ");
