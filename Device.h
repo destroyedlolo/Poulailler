@@ -18,7 +18,7 @@ class Device : public Repeat {
 	Context &context;
 
 public :
-	Device(Context &ctx) : Repeat( INTERVAL * 1e3, true ), context(ctx) {}
+	Device(Context &ctx) : Repeat( ctx, INTERVAL * 1e3, true ), context(ctx) {}
 
 	void action( void ){
 #ifdef SERIAL_ENABLED
