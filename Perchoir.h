@@ -10,7 +10,7 @@
 #include <string>
 
 #include "Context.h"
-#include "Repeat.h"
+#include "Repeater.h"
 
 class Perchoir {
 	float temperature;
