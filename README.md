@@ -27,10 +27,6 @@ Automatisation de mon poulailler.
 * **PIO.A** : Auxiliary power enable (*low*)
 * **PIO.B** : sun light (*low*)
 
-## Door control
-
-* MX1508 H-Bridge
-
 ## Topics
 
 * **Poulailler/Perchoir/Temperature** : as the name said
@@ -42,3 +38,8 @@ Automatisation de mon poulailler.
 * **Poulailler/MQTT/Connection** : reconnect duration
 
 * **Poulailler/Message** : various messages (errors, ...)
+
+## Hardware
+
+* MX1508 H-Bridge
+* 3a77553800000091 : DS2413 - Light control
