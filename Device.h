@@ -10,15 +10,15 @@
 #define INTERVAL 300	// Interval b/w sample in S (5 minutes)
 
 #include "Context.h"
-#include "Repeat.h"
+#include "Repeater.h"
 
 ADC_MODE(ADC_VCC);
 
-class Device : public Repeat {
+class Device : public Repeater {
 	Context &context;
 
 public :
-	Device(Context &ctx) : Repeat( ctx, INTERVAL * 1e3, true ), context(ctx) {}
+	Device(Context &ctx) : Repeater( ctx, INTERVAL * 1e3, true ), context(ctx) {}
 
 	void action( void ){
 #ifdef SERIAL_ENABLED
