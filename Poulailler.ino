@@ -142,6 +142,7 @@ void loop(){
 #	ifdef SERIAL_ENABLED
 		Serial.println("Dodo ...");
 #	endif
-		ESP.deepSleep(DELAY * 1e6);
+		context.keepTimeBeforeSleep( DELAY * 1e3 );	// In mS
+		ESP.deepSleep(DELAY * 1e6);					// In uS
 	}
 }

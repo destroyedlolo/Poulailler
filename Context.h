@@ -10,19 +10,32 @@ class Network;
 
 class Context {
 	bool RTCvalid;	// Is stored memory valid ?
-	uint32_t offset;	// Offset in memory for next data
 	class Network *net;
+	uint32_t offset;	// Offset in memory for next data
+	
+	struct {
+		uint32_t key;	// is RTC valid ?
+		unsigned long int timeoffset;	// Offset for millis()
+	} keep;
 
 public:
 	Context() : RTCvalid(false), net(NULL){
 			/* Check if RTC memory contains valuable data */
-		uint32_t key;
-		if(ESP.rtcUserMemoryRead(0, &key, sizeof(key))){
-			if( key == ESP.getFlashChipId() )
-				RTCvalid = true;
+		if(ESP.rtcUserMemoryRead(0, (uint32_t *)&this->keep, sizeof(this->keep))){
+			if( this->keep.key == ESP.getFlashChipId() )
+				this->RTCvalid = true;
 		}
 
-		offset = sizeof(key);
+		if( !this->RTCvalid ){	// Initial values
+			keep.timeoffset = 0; // Reset timekeeper
+			keep.key = ESP.getFlashChipId();
+
+			/* RTCvalid remains invalid in order to let other modules
+			 * to initialise themselves to default values
+			 */
+		}
+
+		offset = sizeof(keep);
 	}
 
 	void setNetwork( Network *n ){ net = n; }
@@ -30,12 +43,27 @@ public:
 	bool isValid( void ){ return RTCvalid; }
 
 		/* This method has to be called ONLY after all other stuffs
-		 * to be kept are saved
+		 * to be kept are initialised and saved
 		 */
 	void save( void ){
-		uint32_t key = ESP.getFlashChipId();
-		ESP.rtcUserMemoryWrite(0, &key, sizeof(key));
+		ESP.rtcUserMemoryWrite(0, (uint32_t *)&this->keep, sizeof(this->keep));
 		RTCvalid = true;
+	}
+
+		/* Store current time offset before going to deep sleep 
+		 *
+		 * This methods *MUST* be called just before deepsleep otherwise
+		 * the offset will be corrupted
+		 *
+		 * <- tts : time to stay in deep sleep (ms)
+		 */
+	void keepTimeBeforeSleep( unsigned long tts ){
+		keep.timeoffset += millis() + tts;
+		this->save();
+	}
+
+	unsigned long getTime( void ){
+		return( this->keep.timeoffset + millis() );
 	}
 
 	uint32_t reserveData( uint32_t s ){
@@ -50,8 +78,10 @@ public:
 #	ifdef SERIAL_ENABLED
 		Serial.print("Context : RTC ");
 		Serial.println(this->isValid() ? "valid" : "invalid");
-		Serial.print("RTC data size : ");
+		Serial.print("\tRTC data size : ");
 		Serial.println(offset);
+		Serial.print("\tTime offset : ");
+		Serial.println(this->keep.timeoffset);
 #	endif
 #endif
 	}
