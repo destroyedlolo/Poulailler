@@ -36,6 +36,7 @@ Automatisation de mon poulailler.
 * **Poulailler/Perchoir/Temperature** : as the name said
 * **Poulailler/Perchoir/Humidite** : as the name said
 
+* **Poulailler/Alim** : Power supply
 * **Poulailler/Wifi** : time to connect to the WiFi network
 * **Poulailler/MQTT/Connection** : reconnect duration
 

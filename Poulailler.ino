@@ -89,14 +89,15 @@ void Context::publish( const char *topic, const char *msg ){
 
 #include "CommandLine.h"
 #include "Perchoir.h"
+#include "Device.h"
 
 	/* 1-wire */
 #include <OWBus.h>
 OneWire oneWire(ONE_WIRE_BUS);	// Initialize oneWire library
 OWBus bus(&oneWire);
 
-ADC_MODE(ADC_VCC);
-
+	/* Component */
+Device myESP( context );
 
 void setup(){
 		/* Hardware configuration */
@@ -122,6 +123,11 @@ void setup(){
 
 void loop(){
 	bool still_busy = false; // Do we have something left to do ?
+
+		/*
+		 * Components'
+		 */
+	myESP.loop();
 
 		/* 
 		 * Send Perchoir's figures
