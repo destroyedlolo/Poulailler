@@ -34,6 +34,7 @@ Automatisation de mon poulailler.
 
 * **Poulailler/Alim** : Power supply
 * **Poulailler/Memory** : available memory
+* **Poulailler/Network** : Network we are connected to
 * **Poulailler/Wifi** : time to connect to the WiFi network
 * **Poulailler/MQTT/Connection** : reconnect duration
 
@@ -42,4 +43,4 @@ Automatisation de mon poulailler.
 ## Hardware
 
 * MX1508 H-Bridge
-* 3a77553800000091 : DS2413 - Light control
+* 3a77553800000091 : DS2413 - Day light probe

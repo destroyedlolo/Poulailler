@@ -25,7 +25,19 @@ public:
 			SAFEMD			// Try Home network first then automation one
 	};
 
+	const char *toString( enum NetworkMode n ){
+		switch(n){
+		default : return "Failure";
+		case MAISON : return "Maison";
+		case DOMOTIQUE : return "Domotique";
+		case SAFEDM : return "Safe D->M";
+		case SAFEMD : return "Safe M->D";
+		};
+	}
+
 private:
+	bool changed;			// Publish the network as it changed
+
 	struct {
 		unsigned int attempts;	// If in degraded mode, counter before recovery try
 		enum NetworkMode mode, current;	// which mode is in use
@@ -136,17 +148,19 @@ public:
 #ifdef DEV_ONLY
 #	ifdef SERIAL_ENABLED
 		Serial.print("Network\n\tmode :");
-		Serial.println( this->data.mode );
+		Serial.println( this->toString(this->data.mode) );
 		Serial.print("\tcurrent :");
-		Serial.println( this->data.current );
+		Serial.print( this->toString(this->data.current) );
+		Serial.println( this->changed ? " (changed)" : " (kept)");
 #	endif
 #endif
 	}
 
-	Network( Context &ctx ) : Context::keepInRTC( ctx, (uint32_t *)&data, sizeof(data) ){
+	Network( Context &ctx ) : Context::keepInRTC( ctx, (uint32_t *)&data, sizeof(data) ), changed(false){
 		if( !ctx.isValid() ){	// Default value
 			this->data.mode = NetworkMode::SAFEMD;
 			this->data.current = this->getNominalNetwork();
+			this->changed = true;
 			this->save();
 		}
 		clientMQTT.setServer(BROKER_HOST, BROKER_PORT);
@@ -163,8 +177,10 @@ public:
 		if( this->data.current == NetworkMode::FAILURE )
 			this->data.current = this->getNominalNetwork();
 		else if( this->isDegraded() ){
-			if( ! --this->data.attempts )	// Back to nominal network
+			if( ! --this->data.attempts ){	// Back to nominal network
 				this->data.current = this->getNominalNetwork();
+				this->changed = true;		// It will be wrong if the fall back again to alternate network but it's harmless
+			}
 		}
 
 		if( this->data.current == NetworkMode::MAISON ){
@@ -173,6 +189,7 @@ public:
 				this->connectDomotique(false)){	// And we successfully connect to the alternate one
 					this->data.attempts = RETRYAFTERSWITCHING;
 					this->data.current = NetworkMode::DOMOTIQUE;
+					this->changed = true;
 				} else {	// Failing
 					this->data.attempts = RETRYAFTERFAILURE;
 					this->data.current = NetworkMode::FAILURE;
@@ -184,6 +201,7 @@ public:
 				this->connectMaison(false)){	// And we successfully connect to the alternate one
 					this->data.attempts = RETRYAFTERSWITCHING;
 					this->data.current = NetworkMode::MAISON;
+					this->changed = true;
 				} else {	// Failing
 					this->data.attempts = RETRYAFTERFAILURE;
 					this->data.current = NetworkMode::FAILURE;
@@ -212,6 +230,8 @@ public:
 		Serial.println( *dwifi );
 #endif
 		this->publish( (MQTT_Topic + "Wifi").c_str(), String( *dwifi ).c_str() );
+		if( this->changed )
+			this->publish( (MQTT_Topic + "Network").c_str(), this->toString(this->data.current) );
 		return true;
 	}
 
