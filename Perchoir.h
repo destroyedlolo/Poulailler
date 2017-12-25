@@ -9,14 +9,16 @@
 #include <SimpleDHT.h>
 #include <string>
 
+	/* Settings */
+#define INTERVAL_PER 300	// Interval b/w sample in S (5 minutes)
+
 #include "Context.h"
 #include "Repeater.h"
 
-class Perchoir {
+class Perchoir : public Repeater {
 	float temperature;
 	float humidite;
 	int err;
-	unsigned long dernier;	// Last sample time
 
 	Context &context;
 
@@ -44,38 +46,30 @@ protected :
 	}
 
 public :
-	Perchoir( Context &ctx ) : temperature(0), humidite(0), err(SimpleDHTErrSuccess), dernier(0), context( ctx ) {
+	Perchoir( Context &ctx ) : Repeater( ctx, (INTERVAL_PER-10) * 1e3, true ), temperature(0), humidite(0), err(SimpleDHTErrSuccess), context( ctx ) {
 	}
 
-	bool publishFigures( void ){
-		if( millis() < this->dernier || // prevent overflow
-		  !this->dernier ||	// enforce 1st run
-		  millis() > this->dernier + DELAY * 1e3 ){
-			if( !this->sample() ){
-				context.publish( MQTT_Error, this->strerror() );
-#				ifdef SERIAL_ENABLED
-					Serial.print("DHT.sample() :");
-					Serial.println( this->strerror() );
-#				endif
-				return false;
-			}
-
-			String troot = MQTT_Topic + "Perchoir/";
-
-			context.publish( (troot+"Temperature").c_str(), context.toString( this->temperature ).c_str() );
-			context.publish( (troot+"Humidite").c_str(), context.toString( this->humidite ).c_str() );
-
+	void action( void ){
+		if( !this->sample() ){
+			context.publish( MQTT_Error, this->strerror() );
 #			ifdef SERIAL_ENABLED
-			Serial.print("Perchoir :");
-			Serial.print(this->temperature);
-			Serial.print("° ");
-			Serial.println(this->humidite);
+			Serial.print("DHT.sample() :");
+			Serial.println( this->strerror() );
 #			endif
-
-			this->dernier = millis();
+			return;
 		}
 
-		return true;
+		String troot = MQTT_Topic + "Perchoir/";
+
+		context.publish( (troot+"Temperature").c_str(), context.toString( this->temperature ).c_str() );
+		context.publish( (troot+"Humidite").c_str(), context.toString( this->humidite ).c_str() );
+
+#		ifdef SERIAL_ENABLED
+		Serial.print("Perchoir :");
+		Serial.print(this->temperature);
+		Serial.print("° ");
+		Serial.println(this->humidite);
+#		endif
 	}
 };
 #endif

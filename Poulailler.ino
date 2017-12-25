@@ -98,6 +98,7 @@ OWBus bus(&oneWire);
 
 	/* Component */
 Device myESP( context );
+Perchoir perchoir( context );
 
 void setup(){
 		/* Hardware configuration */
@@ -128,12 +129,7 @@ void loop(){
 		 * Components'
 		 */
 	myESP.loop();
-
-		/* 
-		 * Send Perchoir's figures
-		 */
-	Perchoir perchoir( context );
-	perchoir.publishFigures();
+	perchoir.loop();
 
 		/*
 		 * Go to sleep if nothing left to be done

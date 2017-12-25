@@ -7,7 +7,7 @@
 #define DEVICE_H
 
 	/* Settings */
-#define INTERVAL 300	// Interval b/w sample in S (5 minutes)
+#define INTERVAL_DEV 300	// Interval b/w sample in S (5 minutes)
 
 #include "Context.h"
 #include "Repeater.h"
@@ -18,7 +18,7 @@ class Device : public Repeater {
 	Context &context;
 
 public :
-	Device(Context &ctx) : Repeater( ctx, INTERVAL * 1e3, true ), context(ctx) {}
+	Device(Context &ctx) : Repeater( ctx, (INTERVAL_DEV-10) * 1e3, true ), context(ctx) {}	// '-10' ensures a launch if the "sample" time is the same
 
 	void action( void ){
 #ifdef SERIAL_ENABLED
