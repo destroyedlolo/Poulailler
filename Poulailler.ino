@@ -104,12 +104,32 @@ Perchoir perchoir( context );
 #include "CommandLine.h"
 CommandLine cmdline;
 
+#include <OWBus/OWDevice.h>
+
 void CommandLine::loop(){	// Implement command line
 	String cmd = Serial.readString();
 
 	if(cmd == "bye"){
 		this->finished();
 		return;
+	} else if(cmd == "1wscan"){
+		Serial.print("\nNumber of probes on the bus :");
+		Serial.println(bus.getDeviceCount());
+
+		Serial.println("Individual address :");
+		OWBus::Address addr;
+		bus.search_reset();
+		while( bus.search_next( addr ) ){
+			Serial.print( addr.toString().c_str() );
+			Serial.print(" : ");
+			if(!addr.isValid( &oneWire))
+				Serial.println("Invalid address");
+			else {
+				OWDevice probe( bus, addr );
+				Serial.println( probe.getFamily() );
+				Serial.println( probe.isParasitePowered() ? "\tParasite" : "\tExternal" );
+			}
+		}
 	} else
 		Serial.println("Known commands : 1wscan, bye");
 
