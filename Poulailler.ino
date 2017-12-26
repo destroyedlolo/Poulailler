@@ -89,6 +89,7 @@ void Context::publish( const char *topic, const char *msg ){
 #include "CommandLine.h"
 #include "Perchoir.h"
 #include "Device.h"
+#include "Porte.h"
 
 	/* 1-wire */
 #include <OWBus.h>
@@ -99,6 +100,7 @@ OWBus bus(&oneWire);
 	/* Component */
 Device myESP( context );
 Perchoir perchoir( context );
+Porte porte( context );
 
 #if defined(SERIAL_ENABLED) && defined(DEV_ONLY)
 #include "CommandLine.h"
@@ -132,13 +134,15 @@ void CommandLine::loop(){	// Implement command line
 		}
 	} else if(cmd == "pubDev")
 		myESP.action();
+	else if(cmd == "reset")
+		ESP.restart();
 	else if(cmd == "pubPerch")
 		perchoir.action();
 	else if(cmd == "status"){
 		context.status();
 		network.status();
 	} else
-		Serial.println("Known commands : 1wscan, pubDev, pubPerch, status, bye");
+		Serial.println("Known commands : 1wscan, pubDev, pubPerch, status, reset, bye");
 
 	this->prompt();
 }
@@ -152,6 +156,7 @@ void setup(){
 #else
 	pinMode(LED_BUILTIN, OUTPUT);
 #endif
+	porte.setup();
 
 #	ifdef SERIAL_ENABLED
 	Serial.println("\nInitial setup :\n----------");
@@ -164,6 +169,8 @@ void setup(){
 	network.connect();
 	context.setNetwork( &network );
 	LED(HIGH);
+
+	porte.action();	// Potentially, the ESP crashed during a movement, restoring
 }
 
 void loop(){
