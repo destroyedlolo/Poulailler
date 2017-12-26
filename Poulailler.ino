@@ -134,19 +134,27 @@ void CommandLine::loop(){	// Implement command line
 		}
 	} else if(cmd == "pubDev")
 		myESP.action();
-	else if(cmd == "reset")
-		ESP.restart();
 	else if(cmd == "pubPerch")
 		perchoir.action();
+	else if(cmd == "moteur monte" || cmd == "mm")
+		porte.action( Porte::Command::OPEN );
+	else if(cmd == "moteur descent" || cmd == "md")
+		porte.action( Porte::Command::CLOSE );
+	else if(cmd == "moteur stop" || cmd == "ms")
+		porte.action( Porte::Command::STOP );
+	else if(cmd == "reset")
+		ESP.restart();
 	else if(cmd == "status"){
 		context.status();
 		network.status();
 	} else
-		Serial.println("Known commands : 1wscan, pubDev, pubPerch, status, reset, bye");
+		Serial.println("Known commands : 1wscan, moteur monte (mm), moteur descent (md), moteur stop (ms), pubDev, pubPerch, status, reset, bye");
 
 	this->prompt();
 }
 #endif
+
+unsigned int boottime;
 
 void setup(){
 		/* Hardware configuration */
@@ -171,6 +179,8 @@ void setup(){
 	LED(HIGH);
 
 	porte.action();	// Potentially, the ESP crashed during a movement, restoring
+
+	boottime = millis();
 }
 
 void loop(){
@@ -187,7 +197,8 @@ void loop(){
 		 */
 #if defined(SERIAL_ENABLED) && defined(DEV_ONLY)
 	in_interactive = cmdline.isActive();	// Can we enter in interactive mode
-	if(!context.isValid() && millis() < DELAY_STARTUP * 1e3)	// 1st run
+
+	if(!context.isValid() && (millis()-boottime) < DELAY_STARTUP * 1e3)	// 1st run
 		in_interactive = true; // let a chance to enter in interactive mode
 
 	if(!cmdline.isActive() && Serial.available() ){

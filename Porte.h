@@ -12,6 +12,7 @@
 #define PORTE_H
 
 class Porte : public Context::keepInRTC {
+public:
 	enum Command {	// What is requested to the gate
 		NONE,	// Stay at it is
 		STOP,	// Stop the door
@@ -19,6 +20,7 @@ class Porte : public Context::keepInRTC {
 		CLOSE
 	};
 
+private:
 	enum GPIO {
 		DOWN = 12,
 		UP = 13,
