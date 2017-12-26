@@ -130,8 +130,15 @@ void CommandLine::loop(){	// Implement command line
 				Serial.println( probe.isParasitePowered() ? "\tParasite" : "\tExternal" );
 			}
 		}
+	} else if(cmd == "pubDev")
+		myESP.action();
+	else if(cmd == "pubPerch")
+		perchoir.action();
+	else if(cmd == "status"){
+		context.status();
+		network.status();
 	} else
-		Serial.println("Known commands : 1wscan, bye");
+		Serial.println("Known commands : 1wscan, pubDev, pubPerch, status, bye");
 
 	this->prompt();
 }
