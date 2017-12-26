@@ -15,7 +15,7 @@ public:
 
 	void enter() { active = true; prompt(); };
 	void finished() { active = false; };
-	bool isactive() { return active; };
+	bool isActive() { return active; };
 
 	void loop();	// implemented in the main file
 };

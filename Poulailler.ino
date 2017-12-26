@@ -17,6 +17,9 @@ extern "C" {
   #include "user_interface.h"
 }
 
+	/* Network */
+#include "Maison.h"		// My very own environment (WIFI_*, MQTT_*, ...)
+
 	/******
 	 * Parameters
 	 *
@@ -36,10 +39,6 @@ extern "C" {
 #	define LED(x)	{ }
 #	define SERIAL_ENABLED
 #endif
-
-
-	/* Network */
-#include "Maison.h"		// My very own environment (WIFI_*, MQTT_*, ...)
 
 #ifdef STATIC_IP
 	/* Static IP to avoid DHCP querying delay */
@@ -96,9 +95,27 @@ void Context::publish( const char *topic, const char *msg ){
 OneWire oneWire(ONE_WIRE_BUS);	// Initialize oneWire library
 OWBus bus(&oneWire);
 
+
 	/* Component */
 Device myESP( context );
 Perchoir perchoir( context );
+
+#if defined(SERIAL_ENABLED) && defined(DEV_ONLY)
+#include "CommandLine.h"
+CommandLine cmdline;
+
+void CommandLine::loop(){	// Implement command line
+	String cmd = Serial.readString();
+
+	if(cmd == "bye"){
+		this->finished();
+		return;
+	} else
+		Serial.println("Known commands : 1wscan, bye");
+
+	this->prompt();
+}
+#endif
 
 void setup(){
 		/* Hardware configuration */
@@ -124,7 +141,7 @@ void setup(){
 
 void loop(){
 	bool still_busy = false; // Do we have something left to do ?
-
+	bool in_interactive = false;
 		/*
 		 * Components'
 		 */
@@ -132,13 +149,32 @@ void loop(){
 	perchoir.loop();
 
 		/*
+		 * Command line if activated
+		 */
+#if defined(SERIAL_ENABLED) && defined(DEV_ONLY)
+	in_interactive = cmdline.isActive();	// Can we enter in interactive mode
+	if(!context.isValid() && millis() < DELAY_STARTUP * 1e3)	// 1st run
+		in_interactive = true; // let a chance to enter in interactive mode
+
+	if(!cmdline.isActive() && Serial.available() ){
+		cmdline.enter();
+		return;
+	} else if( Serial.available() )	// Already in interactive mode
+		cmdline.loop();
+#endif
+			
+		/*
 		 * Go to sleep if nothing left to be done
 		 */
 	if(!still_busy){
-#	ifdef SERIAL_ENABLED
-		Serial.println("Dodo ...");
-#	endif
-		context.keepTimeBeforeSleep( DELAY * 1e3 );	// In mS
-		ESP.deepSleep(DELAY * 1e6);					// In uS
+		if( in_interactive )
+			delay(DELAY_LIGHT);
+		else {
+#		ifdef SERIAL_ENABLED
+			Serial.println("Dodo ...");
+#		endif
+			context.keepTimeBeforeSleep( DELAY * 1e3 );	// In mS
+			ESP.deepSleep(DELAY * 1e6);					// In uS
+		}
 	}
 }

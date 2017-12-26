@@ -47,7 +47,7 @@ public:
 		 */
 	void save( void ){
 		ESP.rtcUserMemoryWrite(0, (uint32_t *)&this->keep, sizeof(this->keep));
-		RTCvalid = true;
+//		RTCvalid = true;
 	}
 
 		/* Store current time offset before going to deep sleep 
