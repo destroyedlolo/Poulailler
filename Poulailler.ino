@@ -91,10 +91,6 @@ void Context::publish( const char *topic, const char *msg ){
 #include "Device.h"
 #include "Porte.h"
 
-	/* 1-wire */
-#include <OWBus.h>
-OneWire oneWire(ONE_WIRE_BUS);	// Initialize oneWire library
-OWBus bus(&oneWire);
 
 
 	/* Component */
@@ -116,18 +112,18 @@ void CommandLine::loop(){	// Implement command line
 		return;
 	} else if(cmd == "1wscan"){
 		Serial.print("\nNumber of probes on the bus :");
-		Serial.println(bus.getDeviceCount());
+		Serial.println(context.getOWBus().getDeviceCount());
 
 		Serial.println("Individual address :");
 		OWBus::Address addr;
-		bus.search_reset();
-		while( bus.search_next( addr ) ){
+		context.getOWBus().search_reset();
+		while( context.getOWBus().search_next( addr ) ){
 			Serial.print( addr.toString().c_str() );
 			Serial.print(" : ");
-			if(!addr.isValid( &oneWire))
+			if(!addr.isValid( context.getOWBus() ))
 				Serial.println("Invalid address");
 			else {
-				OWDevice probe( bus, addr );
+				OWDevice probe( context.getOWBus(), addr );
 				Serial.println( probe.getFamily() );
 				Serial.println( probe.isParasitePowered() ? "\tParasite" : "\tExternal" );
 			}

@@ -6,12 +6,22 @@
 #ifndef CONTEXT_H
 #define CONTEXT_H
 
+	/* 1-wire */
+#include <OWBus.h>
+/*
+OneWire oneWire(ONE_WIRE_BUS);	// Initialize oneWire library
+OWBus bus(&oneWire);
+*/
+
 class Network;
 
 class Context {
 	bool RTCvalid;	// Is stored memory valid ?
 	class Network *net;
 	uint32_t offset;	// Offset in memory for next data
+
+	OneWire oneWire;
+	OWBus bus;
 	
 	struct {
 		uint32_t key;	// is RTC valid ?
@@ -19,7 +29,7 @@ class Context {
 	} keep;
 
 public:
-	Context() : RTCvalid(false), net(NULL){
+	Context() : RTCvalid(false), net(NULL), oneWire(ONE_WIRE_BUS), bus(&this->oneWire) {
 			/* Check if RTC memory contains valuable data */
 		if(ESP.rtcUserMemoryRead(0, (uint32_t *)&this->keep, sizeof(this->keep))){
 			if( this->keep.key == ESP.getFlashChipId() )
@@ -39,6 +49,8 @@ public:
 	}
 
 	void setNetwork( Network *n ){ net = n; }
+
+	OWBus &getOWBus( void ){ return bus; }
 
 	bool isValid( void ){ return RTCvalid; }
 
