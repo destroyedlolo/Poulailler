@@ -1,6 +1,6 @@
 /* Auxiliaires
  * 
- * Axillary power, solar light and water checks
+ * Auxiliary power, solar light and water checks
  */
 
 #ifndef AUXILIAIRE_H
@@ -19,6 +19,10 @@ class Auxiliaires {
 public:
 	Auxiliaires( Context &ctx ) : context( ctx ), 
 		gpio( context.getOWBus(), DSADDR ) { }
+
+	void setup( void ){
+		gpio.writePIOs( 0xff );
+	}
 
 	void power( bool v ){
 #		ifdef SERIAL_ENABLED

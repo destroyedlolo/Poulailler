@@ -166,6 +166,7 @@ void setup(){
 	pinMode(LED_BUILTIN, OUTPUT);
 #endif
 	porte.setup();
+	auxiliaires.setup();
 
 #	ifdef SERIAL_ENABLED
 	Serial.println("\nInitial setup :\n----------");
@@ -219,6 +220,7 @@ void loop(){
 #		ifdef SERIAL_ENABLED
 			Serial.println("Dodo ...");
 #		endif
+			auxiliaires.power(0);	// Switch off auxiliaries
 			context.keepTimeBeforeSleep( DELAY * 1e3 );	// In mS
 			ESP.deepSleep(DELAY * 1e6);					// In uS
 		}
