@@ -6,6 +6,8 @@
 #ifndef AUXILIAIRE_H
 #define AUXILIAIRE_H
 
+#define WATER_GPIO	4
+
 #include "Context.h"
 
 #include <OWBus/DS2413.h>
@@ -22,6 +24,7 @@ public:
 
 	void setup( void ){
 		gpio.writePIOs( 0xff );
+		pinMode(WATER_GPIO, INPUT);
 	}
 
 	void power( bool v ){
@@ -44,11 +47,17 @@ public:
 		return !gpio.getPIOB();
 	}
 
+	bool water( void ){
+		return digitalRead( WATER_GPIO );
+	}
+
 	void status( void ){
 #if defined(DEV_ONLY) && defined(SERIAL_ENABLED)
 		Serial.print("Auxillaries : ");
-		Serial.print( this->isPowered(true)? "powered " : "off ");
+		Serial.print( this->isPowered(true)? "powered, " : "off, ");
+		Serial.print( this->water() ? "enought water, " : "lack of water, ");
 		Serial.println(this->SunLight() ? "Day" : "Night");
+
 #endif
 	}
 
