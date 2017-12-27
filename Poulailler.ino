@@ -90,13 +90,13 @@ void Context::publish( const char *topic, const char *msg ){
 #include "Perchoir.h"
 #include "Device.h"
 #include "Porte.h"
-
-
+#include "Auxiliaires.h"
 
 	/* Component */
 Device myESP( context );
 Perchoir perchoir( context );
 Porte porte( context );
+Auxiliaires auxiliaires( context );
 
 #if defined(SERIAL_ENABLED) && defined(DEV_ONLY)
 #include "CommandLine.h"
@@ -132,6 +132,10 @@ void CommandLine::loop(){	// Implement command line
 		myESP.action();
 	else if(cmd == "pubPerch")
 		perchoir.action();
+	else if(cmd == "Aux on")
+		auxiliaires.power(1);
+	else if(cmd == "Aux off")
+		auxiliaires.power(0);
 	else if(cmd == "moteur monte" || cmd == "mm")
 		porte.action( Porte::Command::OPEN );
 	else if(cmd == "moteur descent" || cmd == "md")
@@ -143,8 +147,9 @@ void CommandLine::loop(){	// Implement command line
 	else if(cmd == "status"){
 		context.status();
 		network.status();
+		auxiliaires.status();
 	} else
-		Serial.println("Known commands : 1wscan, moteur monte (mm), moteur descent (md), moteur stop (ms), pubDev, pubPerch, status, reset, bye");
+		Serial.println("Known commands : Aux on, Aux off, Moteur monte (mm), Moteur descent (md), Moteur stop (ms), pubDev, pubPerch, status, 1wscan, reset, bye");
 
 	this->prompt();
 }

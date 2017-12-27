@@ -8,10 +8,6 @@
 
 	/* 1-wire */
 #include <OWBus.h>
-/*
-OneWire oneWire(ONE_WIRE_BUS);	// Initialize oneWire library
-OWBus bus(&oneWire);
-*/
 
 class Network;
 
