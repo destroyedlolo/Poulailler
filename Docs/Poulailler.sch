@@ -611,7 +611,7 @@ Wire Wire Line
 Wire Wire Line
 	3300 2300 3350 2300
 Wire Wire Line
-	3350 2300 3350 2850
+	3350 2100 3350 2850
 Wire Notes Line
 	4350 3050 4350 4300
 Wire Wire Line
@@ -738,4 +738,19 @@ Wire Wire Line
 Wire Wire Line
 	5850 1050 5850 1150
 Connection ~ 5050 1050
+$Comp
+L R R?
+U 1 1 5A46A837
+P 3350 1950
+F 0 "R?" V 3430 1950 50  0001 C CNN
+F 1 "10k" V 3350 1950 50  0000 C CNN
+F 2 "" V 3280 1950 50  0001 C CNN
+F 3 "" H 3350 1950 50  0001 C CNN
+	1    3350 1950
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3350 1450 3350 1800
+Connection ~ 3350 1450
+Connection ~ 3350 2300
 $EndSCHEMATC
