@@ -14,17 +14,17 @@ Automatisation de mon poulailler.
 ## ESP8266 GPIOs
 
 * **ADC** : power supply monitoring (*internal*)
-* **GPIO0** : enable water warming (*low*)
+* **GPIO0** : enable aux power (*low*)
 * **GPIO2** : 1-wire
 * **GPIO4** : water low (*low*)
 * **GPIO5** : DHT22
 * **GPIO15** : Door in stop position (*high* depend on GPIO12/13)
 * **GPIO013** : Door up (*high*)
-* **GPIO012** : Door Down (*high*)
+* **GPIO012** : water warming (*high*)
 
 ## DS2413 PIOs
 
-* **PIO.A** : Auxiliary power enable (*low*)
+* **PIO.A** : Force water warming
 * **PIO.B** : sun light (*low*)
 
 ## Topics

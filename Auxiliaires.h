@@ -7,6 +7,7 @@
 #define AUXILIAIRE_H
 
 #define WATER_GPIO	4
+#define AUXPWR_GPIO	0
 
 #include "Context.h"
 
@@ -25,6 +26,8 @@ public:
 	void setup( void ){
 		gpio.writePIOs( 0xff );
 		pinMode(WATER_GPIO, INPUT);
+		digitalWrite(AUXPWR_GPIO, 1);	// By default Aux power is disabled
+		pinMode(AUXPWR_GPIO, OUTPUT);
 	}
 
 	void power( bool v ){
@@ -32,13 +35,11 @@ public:
 		Serial.println( v ? "Auxillaries ON" : "Auxillaries OFF" );
 #		endif
 
-		gpio.setPIOA(!v);
+		digitalWrite(AUXPWR_GPIO, !v);	// Caution : power is active when GPIO is LOW
 	}
 
-	bool isPowered( bool refresh=true ){
-		if(refresh)
-			gpio.readPIOs();
-		return !gpio.getFlipFlopA();
+	bool isPowered( ){
+		return !digitalRead(AUXPWR_GPIO);
 	}
 
 	bool SunLight( bool refresh=true ){

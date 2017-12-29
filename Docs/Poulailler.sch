@@ -1,5 +1,4 @@
 EESchema Schematic File Version 2
-LIBS:maxim
 LIBS:power
 LIBS:transistors
 LIBS:conn
@@ -28,11 +27,6 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
-LIBS:ESP8266
-LIBS:sensors
-LIBS:device
-LIBS:Switch
-LIBS:Motor
 LIBS:Poulailler-cache
 EELAYER 25 0
 EELAYER END
@@ -59,7 +53,7 @@ F 3 "" H 6850 2550 50  0001 C CNN
 	1    6850 2550
 	1    0    0    -1  
 $EndComp
-Text GLabel 5050 1450 1    60   Input ~ 0
+Text GLabel 5050 950  1    60   Input ~ 0
 +3,3
 $Comp
 L R R1
@@ -72,7 +66,7 @@ F 3 "" H 5200 2150 50  0000 C CNN
 	1    5200 2150
 	0    1    1    0   
 $EndComp
-Text GLabel 5400 1450 1    60   Input ~ 0
+Text GLabel 5400 1700 1    60   Input ~ 0
 1-wire
 $Comp
 L R R2
@@ -99,23 +93,23 @@ $EndComp
 $Comp
 L R R?
 U 1 1 5A234A19
-P 3850 2100
-F 0 "R?" V 3930 2100 50  0001 C CNN
-F 1 "1.8k" V 3850 2100 50  0000 C CNN
-F 2 "" V 3780 2100 50  0000 C CNN
-F 3 "" H 3850 2100 50  0000 C CNN
-	1    3850 2100
-	0    1    1    0   
+P 5650 1600
+F 0 "R?" V 5730 1600 50  0001 C CNN
+F 1 "1.8k" V 5650 1600 50  0000 C CNN
+F 2 "" V 5580 1600 50  0000 C CNN
+F 3 "" H 5650 1600 50  0000 C CNN
+	1    5650 1600
+	1    0    0    -1  
 $EndComp
 $Comp
 L Q_PNP_ECB Q1
 U 1 1 5A234AEE
-P 3700 1800
-F 0 "Q1" H 4000 1850 50  0000 R CNN
-F 1 "Q_PNP_ECB" H 4300 1750 50  0001 R CNN
-F 2 "" H 3900 1900 50  0000 C CNN
-F 3 "" H 3700 1800 50  0000 C CNN
-	1    3700 1800
+P 5650 1250
+F 0 "Q1" H 5950 1300 50  0000 R CNN
+F 1 "Q_PNP_ECB" H 6250 1200 50  0001 R CNN
+F 2 "" H 5850 1350 50  0000 C CNN
+F 3 "" H 5650 1250 50  0000 C CNN
+	1    5650 1250
 	0    -1   -1   0   
 $EndComp
 $Comp
@@ -201,7 +195,7 @@ F 3 "" V 1050 1740 50  0000 C CNN
 	1    1050 1700
 	0    1    1    0   
 $EndComp
-Text GLabel 3500 1400 1    60   Input ~ 0
+Text GLabel 4700 1150 1    60   Input ~ 0
 PowerAux
 $Comp
 L LM393 U?
@@ -503,8 +497,6 @@ Wire Wire Line
 	5700 2950 5700 3400
 Wire Wire Line
 	5350 2150 5700 2150
-Wire Wire Line
-	5050 1450 5050 3050
 Connection ~ 5050 2150
 Connection ~ 5400 2150
 Wire Wire Line
@@ -517,15 +509,8 @@ Wire Wire Line
 Wire Wire Line
 	4950 1400 4950 3550
 Wire Wire Line
-	5400 1450 5400 2700
-Connection ~ 5500 2050
-Wire Wire Line
 	1300 2500 1300 3350
 Connection ~ 5050 2050
-Wire Wire Line
-	3700 2000 3700 2100
-Wire Wire Line
-	3500 1400 3500 1700
 Wire Wire Line
 	4150 1200 4150 1600
 Wire Wire Line
@@ -542,7 +527,6 @@ Wire Wire Line
 	2900 1450 4350 1450
 Wire Wire Line
 	4350 1450 4350 1200
-Connection ~ 3500 1450
 Wire Wire Line
 	3600 2300 4950 2300
 Connection ~ 4950 2300
@@ -559,8 +543,6 @@ Wire Wire Line
 Wire Wire Line
 	1000 3650 1300 3650
 Wire Wire Line
-	5500 2800 5500 2050
-Wire Wire Line
 	5400 2700 4150 2700
 Wire Wire Line
 	4150 2700 4150 3550
@@ -576,10 +558,6 @@ Wire Wire Line
 Wire Wire Line
 	3850 2650 5050 2650
 Connection ~ 5050 2650
-Wire Wire Line
-	1600 2600 1600 2800
-Wire Wire Line
-	1600 2800 5500 2800
 Wire Notes Line
 	4350 3050 650  3050
 Wire Wire Line
@@ -728,11 +706,6 @@ Wire Wire Line
 Wire Wire Line
 	8750 1300 8750 2550
 Wire Wire Line
-	3900 1700 3900 1650
-Wire Wire Line
-	3900 1650 5050 1650
-Connection ~ 5050 1650
-Wire Wire Line
 	8000 2850 8450 2850
 Wire Wire Line
 	8450 2850 8450 3650
@@ -746,4 +719,23 @@ Wire Wire Line
 	9100 3500 9100 3350
 Wire Wire Line
 	9100 3350 8850 3350
+Wire Wire Line
+	5400 1700 5400 2700
+Wire Wire Line
+	5050 950  5050 3050
+Wire Wire Line
+	5650 1750 5650 2050
+Connection ~ 5650 2050
+Wire Wire Line
+	5450 1150 4700 1150
+Wire Wire Line
+	4700 1150 4700 1250
+Wire Wire Line
+	4700 1250 4350 1250
+Connection ~ 4350 1250
+Wire Wire Line
+	5050 1050 5850 1050
+Wire Wire Line
+	5850 1050 5850 1150
+Connection ~ 5050 1050
 $EndSCHEMATC
