@@ -49,7 +49,7 @@ public:
 	}
 
 	bool water( void ){
-		return digitalRead( WATER_GPIO );
+		return !digitalRead( WATER_GPIO );
 	}
 
 	void status( void ){
