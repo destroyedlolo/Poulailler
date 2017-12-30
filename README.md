@@ -16,7 +16,7 @@ Automatisation de mon poulailler.
 * **ADC** : power supply monitoring (*internal*)
 * **GPIO0** : enable aux power (*low*)
 * **GPIO2** : 1-wire
-* **GPIO4** : water low (*low*)
+* **GPIO4** : Water warming
 * **GPIO5** : DHT22
 * **GPIO15** : Door in stop position (*high* depend on GPIO12/13)
 * **GPIO013** : Door up (*high*)
@@ -24,7 +24,7 @@ Automatisation de mon poulailler.
 
 ## DS2413 PIOs
 
-* **PIO.A** : Force water warming
+* **PIO.A** : water low (*low*)
 * **PIO.B** : sun light (*low*)
 
 ## Topics

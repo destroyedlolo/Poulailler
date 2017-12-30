@@ -6,7 +6,6 @@
 #ifndef AUXILIAIRE_H
 #define AUXILIAIRE_H
 
-#define WATER_GPIO	4
 #define AUXPWR_GPIO	0
 
 #include "Context.h"
@@ -24,8 +23,7 @@ public:
 		gpio( context.getOWBus(), DSADDR ) { }
 
 	void setup( void ){
-		gpio.writePIOs( 0xff );
-		pinMode(WATER_GPIO, INPUT);
+		gpio.writePIOs( 0xff );	// Put GPIO as Input
 		digitalWrite(AUXPWR_GPIO, 1);	// By default Aux power is disabled
 		pinMode(AUXPWR_GPIO, OUTPUT);
 	}
@@ -48,15 +46,17 @@ public:
 		return !gpio.getPIOB();
 	}
 
-	bool water( void ){
-		return !digitalRead( WATER_GPIO );
+	bool water( bool refresh=true ){
+		if(refresh)
+			gpio.readPIOs();
+		return !gpio.getPIOA();
 	}
 
 	void status( void ){
 #if defined(DEV_ONLY) && defined(SERIAL_ENABLED)
 		Serial.print("Auxillaries : ");
 		Serial.print( this->isPowered()? "powered, " : "off, ");
-		Serial.print( this->water() ? "enought water, " : "lack of water, ");
+		Serial.print( this->water(true) ? "enought water, " : "lack of water, ");
 		Serial.println(this->SunLight() ? "Day" : "Night");
 
 #endif

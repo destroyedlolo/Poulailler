@@ -578,8 +578,6 @@ Wire Wire Line
 Connection ~ 4400 2300
 Connection ~ 2900 2600
 Wire Wire Line
-	3350 2850 5700 2850
-Wire Wire Line
 	2700 2200 2650 2200
 Wire Wire Line
 	2650 2200 2650 3350
@@ -608,10 +606,6 @@ Connection ~ 8200 2050
 Connection ~ 8400 2050
 Wire Wire Line
 	8000 3050 9600 3050
-Wire Wire Line
-	3300 2300 3350 2300
-Wire Wire Line
-	3350 2100 3350 2850
 Wire Notes Line
 	4350 3050 4350 4300
 Wire Wire Line
@@ -752,5 +746,11 @@ $EndComp
 Wire Wire Line
 	3350 1450 3350 1800
 Connection ~ 3350 1450
-Connection ~ 3350 2300
+Wire Wire Line
+	3350 2100 4000 2100
+Connection ~ 3350 2100
+Wire Wire Line
+	3300 2300 3350 2300
+Wire Wire Line
+	3350 2300 3350 2100
 $EndSCHEMATC
