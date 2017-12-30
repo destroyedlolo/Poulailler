@@ -389,12 +389,12 @@ $EndComp
 $Comp
 L D D?
 U 1 1 5A24B677
-P 8200 3300
-F 0 "D?" H 8200 3400 50  0001 C CNN
-F 1 "Dd" H 8200 3200 50  0000 C CNN
-F 2 "" H 8200 3300 50  0001 C CNN
-F 3 "" H 8200 3300 50  0001 C CNN
-	1    8200 3300
+P 8550 2700
+F 0 "D?" H 8550 2800 50  0001 C CNN
+F 1 "Dd" H 8550 2600 50  0000 C CNN
+F 2 "" H 8550 2700 50  0001 C CNN
+F 3 "" H 8550 2700 50  0001 C CNN
+	1    8550 2700
 	0    1    1    0   
 $EndComp
 $Comp
@@ -417,17 +417,6 @@ F 1 "100mF" V 8950 3550 50  0000 L CNN
 F 2 "" H 9138 3500 50  0001 C CNN
 F 3 "" H 9100 3650 50  0001 C CNN
 	1    9100 3650
-	-1   0    0    -1  
-$EndComp
-$Comp
-L DS28EA00 U?
-U 1 1 5A233EEF
-P 4400 2000
-F 0 "U?" H 4150 2250 50  0001 C CNN
-F 1 "DS2413" H 4650 2250 50  0000 C CNN
-F 2 "Housings_SSOP:MSOP-8_3x3mm_Pitch0.65mm" H 3400 1750 50  0001 C CNN
-F 3 "" H 4150 2250 50  0001 C CNN
-	1    4400 2000
 	-1   0    0    -1  
 $EndComp
 Text Notes 4700 1900 0    60   ~ 0
@@ -512,8 +501,6 @@ Wire Wire Line
 Connection ~ 5050 2150
 Connection ~ 5400 2150
 Wire Wire Line
-	8000 2950 8000 3450
-Wire Wire Line
 	5350 2050 5700 2050
 Connection ~ 5400 1900
 Wire Wire Line
@@ -525,12 +512,6 @@ Wire Wire Line
 Connection ~ 5050 2050
 Wire Wire Line
 	4150 1200 4150 1600
-Wire Wire Line
-	4150 1600 4850 1600
-Wire Wire Line
-	4850 1600 4850 2100
-Wire Wire Line
-	4850 2100 4800 2100
 Wire Wire Line
 	4950 1400 4250 1400
 Wire Wire Line
@@ -698,9 +679,9 @@ Wire Wire Line
 	9100 3800 9100 3950
 Connection ~ 9100 3950
 Wire Wire Line
-	9100 3500 9100 3350
+	9100 3350 9100 3500
 Wire Wire Line
-	9100 3350 8850 3350
+	8550 3350 9350 3350
 Wire Wire Line
 	5400 1700 5400 2700
 Wire Wire Line
@@ -720,12 +701,7 @@ Connection ~ 5050 1050
 Wire Wire Line
 	3300 1250 3300 1800
 Wire Wire Line
-	8000 3450 8200 3450
-Connection ~ 8000 3400
-Wire Wire Line
-	8200 3150 8200 2550
-Wire Wire Line
-	8200 2550 8000 2550
+	8000 2550 8550 2550
 Wire Wire Line
 	9400 1000 9600 1000
 Wire Wire Line
@@ -737,8 +713,6 @@ Wire Wire Line
 	7900 1050 7900 1000
 Connection ~ 5850 1050
 Connection ~ 9000 1000
-Wire Wire Line
-	3300 2100 4000 2100
 Wire Wire Line
 	3300 2100 3300 2300
 Wire Wire Line
@@ -769,4 +743,35 @@ $EndComp
 Wire Wire Line
 	5550 3200 5550 2050
 Connection ~ 5550 2050
+Wire Wire Line
+	8000 2950 8000 3400
+Wire Wire Line
+	8550 2850 8550 3350
+Connection ~ 8850 3350
+Connection ~ 9100 3350
+$Comp
+L DS28EA00 U?
+U 1 1 5A233EEF
+P 4400 2000
+F 0 "U?" H 4150 2250 50  0001 C CNN
+F 1 "DS2413" H 4650 2250 50  0000 C CNN
+F 2 "Housings_SSOP:MSOP-8_3x3mm_Pitch0.65mm" H 3400 1750 50  0001 C CNN
+F 3 "" H 4150 2250 50  0001 C CNN
+	1    4400 2000
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	3300 2100 3750 2100
+Wire Wire Line
+	3750 2100 3750 2400
+Wire Wire Line
+	3750 2400 4800 2400
+Wire Wire Line
+	4800 2400 4800 2100
+Wire Wire Line
+	4150 1600 3900 1600
+Wire Wire Line
+	3900 1600 3900 2100
+Wire Wire Line
+	3900 2100 4000 2100
 $EndSCHEMATC

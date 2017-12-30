@@ -1,4 +1,4 @@
-update=sam. 30 déc. 2017 16:02:02 CET
+update=sam. 30 déc. 2017 16:32:08 CET
 version=1
 last_client=kicad
 [pcbnew]
@@ -25,16 +25,6 @@ version=1
 NetIExt=net
 [general]
 version=1
-[schematic_editor]
-version=1
-PageLayoutDescrFile=
-PlotDirectoryName=
-SubpartIdSeparator=0
-SubpartFirstId=65
-NetFmtName=
-SpiceForceRefPrefix=0
-SpiceUseNetNumbers=0
-LabSize=60
 [eeschema]
 version=1
 LibDir=/home/laurent/Modèles/KiCad
@@ -74,3 +64,13 @@ LibName32=kicad/kicad-library/library/device
 LibName33=Switch
 LibName34=Motor
 LibName35=device
+[schematic_editor]
+version=1
+PageLayoutDescrFile=
+PlotDirectoryName=
+SubpartIdSeparator=0
+SubpartFirstId=65
+NetFmtName=
+SpiceForceRefPrefix=0
+SpiceUseNetNumbers=0
+LabSize=60

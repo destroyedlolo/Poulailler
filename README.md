@@ -24,8 +24,8 @@ Automatisation de mon poulailler.
 
 ## DS2413 PIOs
 
-* **PIO.A** : water low (*low*)
-* **PIO.B** : sun light (*low*)
+* **PIO.A** : sun light (*low*)
+* **PIO.B** : water low (*low*)
 
 ## Topics
 

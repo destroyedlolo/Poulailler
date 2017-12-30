@@ -43,13 +43,13 @@ public:
 	bool SunLight( bool refresh=true ){
 		if(refresh)
 			gpio.readPIOs();
-		return !gpio.getPIOB();
+		return !gpio.getPIOA();
 	}
 
 	bool water( bool refresh=true ){
 		if(refresh)
 			gpio.readPIOs();
-		return !gpio.getPIOA();
+		return !gpio.getPIOB();
 	}
 
 	void status( void ){
