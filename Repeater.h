@@ -35,6 +35,16 @@ public:
 			this->save();
 		}
 	}
+
+	unsigned long int remain(void){
+	/* Return the duration before the next activation
+	 * in mS
+	 */
+		if(context.getTime() > this->next)
+			return 0;
+		else
+			return( this->next - context.getTime() );
+	}
 };
 
 #endif

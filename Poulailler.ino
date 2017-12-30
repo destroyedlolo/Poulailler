@@ -172,15 +172,19 @@ void loop(){
 		 * Go to sleep if nothing left to be done
 		 */
 	if(!still_busy){
-		if( in_interactive )
-			delay(DELAY_LIGHT);
-		else {
+		unsigned long int howlong = _min( myESP.remain(), perchoir.remain() );
+
+		if( in_interactive ){
+			howlong = _min( howlong, DELAY_LIGHT );
+			delay(howlong);
+		} else {
 #		ifdef SERIAL_ENABLED
-			Serial.println("Dodo ...");
+			Serial.print("Dodo ");
+			Serial.print( howlong );
+			Serial.println(" mS ...");
 #		endif
-			auxiliaires.power(0);	// Switch off auxiliaries
-			context.keepTimeBeforeSleep( DELAY * 1e3 );	// In mS
-			ESP.deepSleep(DELAY * 1e6);					// In uS
+			context.keepTimeBeforeSleep( howlong );	// In mS
+			ESP.deepSleep(howlong * 1e3);			// In uS
 		}
 	}
 }

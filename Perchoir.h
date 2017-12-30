@@ -10,8 +10,7 @@
 #include <string>
 
 	/* Settings */
-#define INTERVAL_PER 300	// Interval b/w sample in S (5 minutes)
-
+#include "Parameters.h"
 #include "Context.h"
 #include "Repeater.h"
 
@@ -46,7 +45,7 @@ protected :
 	}
 
 public :
-	Perchoir( Context &ctx ) : Repeater( ctx, (INTERVAL_PER-10) * 1e3, true ), temperature(0), humidite(0), err(SimpleDHTErrSuccess), context( ctx ) {
+	Perchoir( Context &ctx ) : Repeater( ctx, (INTERVAL_PERCHOIR-10) * 1e3, true ), temperature(0), humidite(0), err(SimpleDHTErrSuccess), context( ctx ) {
 	}
 
 	void action( void ){
