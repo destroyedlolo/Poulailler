@@ -55,7 +55,7 @@ public:
 	void status( void ){
 #if defined(DEV_ONLY) && defined(SERIAL_ENABLED)
 		Serial.print("Auxillaries : ");
-		Serial.print( this->isPowered(true)? "powered, " : "off, ");
+		Serial.print( this->isPowered()? "powered, " : "off, ");
 		Serial.print( this->water() ? "enought water, " : "lack of water, ");
 		Serial.println(this->SunLight() ? "Day" : "Night");
 
