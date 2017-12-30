@@ -1,4 +1,4 @@
-update=dim. 03 déc. 2017 21:13:35 CET
+update=sam. 30 déc. 2017 16:02:02 CET
 version=1
 last_client=kicad
 [pcbnew]
@@ -25,9 +25,19 @@ version=1
 NetIExt=net
 [general]
 version=1
+[schematic_editor]
+version=1
+PageLayoutDescrFile=
+PlotDirectoryName=
+SubpartIdSeparator=0
+SubpartFirstId=65
+NetFmtName=
+SpiceForceRefPrefix=0
+SpiceUseNetNumbers=0
+LabSize=60
 [eeschema]
 version=1
-LibDir=/usr/local/share/kicad/kicad-ESP8266;/usr/local/share/kicad/kicad-library/library
+LibDir=/home/laurent/Modèles/KiCad
 [eeschema/libraries]
 LibName1=kicad/kicad-library/library/maxim
 LibName2=power
@@ -63,3 +73,4 @@ LibName31=kicad/kicad-library/library/sensors
 LibName32=kicad/kicad-library/library/device
 LibName33=Switch
 LibName34=Motor
+LibName35=device
