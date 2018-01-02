@@ -15,6 +15,10 @@ PubSubClient clientMQTT(clientWiFi);
 #include "Context.h"
 #include "Duration.h"
 
+#ifdef DEV_ONLY
+extern void handleMQTT(char*, byte*, unsigned int);
+#endif
+
 class Network : public Context::keepInRTC {
 public:
 	enum NetworkMode { 
@@ -141,6 +145,8 @@ private:
 				delay(1000);	// Test dans 1 seconde
 			}
 		}
+
+		clientMQTT.subscribe(MQTT_Command.c_str());
 	}
 
 public:
@@ -163,6 +169,9 @@ public:
 			this->save();
 		}
 		clientMQTT.setServer(BROKER_HOST, BROKER_PORT);
+#ifdef DEV_ONLY
+		clientMQTT.setCallback( handleMQTT );
+#endif
 	}
 
 	bool isDegraded( void ){
@@ -252,6 +261,11 @@ public:
 			clientMQTT.publish( (MQTT_Topic + "MQTT/Connection").c_str(), String( *dmqtt ).c_str() );
 		}
 		clientMQTT.publish( topic, msg );
+	}
+
+	void loop( void ){
+		if(clientMQTT.connected())
+			clientMQTT.loop();
 	}
 };
 

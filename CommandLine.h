@@ -21,6 +21,11 @@ public:
 	void finished() { active = false; context.Output("Automatic mode"); };
 	bool isActive() { return active; };
 
-	void loop();	// implemented in the main file
+	void readSerial( void ){
+		String cmd = Serial.readString();
+		this->exec( cmd );
+	}
+
+	void exec( String & );	// implemented in the main file
 };
 #endif

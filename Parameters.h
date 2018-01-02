@@ -36,6 +36,7 @@ IPAddress adr_dns(192, 168, 0, 3);
 String MQTT_Topic("Poulailler/");	// Topic's root
 String MQTT_Error = MQTT_Topic + "Error";
 String MQTT_Output = MQTT_Topic + "Message";
+String MQTT_Command = MQTT_Topic + "Command";
 
 	/* Delays */
 #define DELAY_STARTUP	5		// Let a chance to enter in interactive mode at startup ( 5s )

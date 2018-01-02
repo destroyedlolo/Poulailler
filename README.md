@@ -40,6 +40,7 @@ Automatisation de mon poulailler.
 
 * **Poulailler/Error** : Error messages
 * **Poulailler/Message** : various messages, output, ...
+* **Poulailler/Command** : MQTT commands topic ...
 
 ## Hardware
 

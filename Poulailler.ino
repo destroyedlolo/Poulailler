@@ -62,9 +62,7 @@ CommandLine cmdline;
 
 #include <OWBus/OWDevice.h>
 
-void CommandLine::loop(){	// Implement command line
-	String cmd = Serial.readString();
-
+void CommandLine::exec( String &cmd ){	// Implement command line
 	if(cmd == "bye"){
 		this->finished();
 		return;
@@ -114,6 +112,25 @@ void CommandLine::loop(){	// Implement command line
 	}
 	this->prompt();
 }
+
+void handleMQTT(char* topic, byte* payload, unsigned int length){
+	String msg;
+	for(int i=0;i<length;i++)
+		msg += (char)payload[i];
+
+#	ifdef SERIAL_ENABLED
+	Serial.print( "Message [" );
+	Serial.print( topic );
+	Serial.print( "] : '" );
+	Serial.print( msg );
+	Serial.println( "'" );
+#	endif
+	
+	if(!cmdline.isActive())
+		cmdline.enter();
+
+	cmdline.exec( msg );
+}
 #endif
 
 unsigned int boottime;
@@ -152,23 +169,26 @@ void loop(){
 		/*
 		 * Components'
 		 */
+	network.loop();
 	myESP.loop();
 	perchoir.loop();
 
 		/*
 		 * Command line if activated
 		 */
-#if defined(SERIAL_ENABLED) && defined(DEV_ONLY)
+#ifdef DEV_ONLY
 	in_interactive = cmdline.isActive();	// Can we enter in interactive mode
 
 	if(!context.isValid() && (millis()-boottime) < DELAY_STARTUP * 1e3)	// 1st run
 		in_interactive = true; // let a chance to enter in interactive mode
 
+#	ifdef SERIAL_ENABLED
 	if(!cmdline.isActive() && Serial.available() ){
 		cmdline.enter();
 		return;
 	} else if( Serial.available() )	// Already in interactive mode
-		cmdline.loop();
+		cmdline.readSerial();
+#	endif
 #endif
 			
 		/*
