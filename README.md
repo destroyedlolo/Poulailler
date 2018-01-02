@@ -54,3 +54,8 @@ Automatisation de mon poulailler.
 		* If Day -> Night close door after 5'
 		* If Night -> Day open the door
 
+## Connector
+
+| Power | DHT  22 | Water |  1-wire | Closing Door | Opening Door |
+| ----- | ------- | ----- | ------- | ------------ | ------------ |
+| +5 G  | G Dt +3 | Dt G  | G Dt +3 | H  Com  End  |  H Com End   |
