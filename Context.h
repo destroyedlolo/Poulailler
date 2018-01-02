@@ -94,6 +94,13 @@ public:
 #endif
 	}
 
+	void Output( String &msg ){
+#		ifdef SERIAL_ENABLED
+		Serial.println( msg );
+#		endif
+		this->publish( MQTT_Error, msg );
+	}
+
 	class keepInRTC {
 		uint32_t *what;
 		uint32_t size;
