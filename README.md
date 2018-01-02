@@ -38,7 +38,8 @@ Automatisation de mon poulailler.
 * **Poulailler/Wifi** : time to connect to the WiFi network
 * **Poulailler/MQTT/Connection** : reconnect duration
 
-* **Poulailler/Message** : various messages (errors, ...)
+* **Poulailler/Error** : Error messages
+* **Poulailler/Message** : various messages, output, ...
 
 ## Hardware
 
