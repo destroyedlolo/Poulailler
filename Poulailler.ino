@@ -56,7 +56,7 @@ Perchoir perchoir( context );
 Porte porte( context );
 Auxiliaires auxiliaires( context );
 
-#if defined(SERIAL_ENABLED) && defined(DEV_ONLY)
+#ifdef DEV_ONLY
 #include "CommandLine.h"
 CommandLine cmdline;
 
@@ -69,23 +69,25 @@ void CommandLine::loop(){	// Implement command line
 		this->finished();
 		return;
 	} else if(cmd == "1wscan"){
-		Serial.print("\nNumber of probes on the bus :");
-		Serial.println(context.getOWBus().getDeviceCount());
+		String msg = "Number of probes on the bus : ";
+		msg += context.getOWBus().getDeviceCount();
 
-		Serial.println("Individual address :");
+		msg += "\nIndividual address :";
 		OWBus::Address addr;
 		context.getOWBus().search_reset();
 		while( context.getOWBus().search_next( addr ) ){
-			Serial.print( addr.toString().c_str() );
-			Serial.print(" : ");
+			msg += "\n\t";
+			msg += addr.toString().c_str();
+			msg += " : ";
 			if(!addr.isValid( context.getOWBus() ))
-				Serial.println("Invalid address");
+				msg += "Invalid address\n";
 			else {
 				OWDevice probe( context.getOWBus(), addr );
-				Serial.println( probe.getFamily() );
-				Serial.println( probe.isParasitePowered() ? "\tParasite" : "\tExternal" );
+				msg += probe.getFamily();
+				msg += probe.isParasitePowered() ? " (Parasite)" : " (External)";
 			}
 		}
+		context.Output(msg);
 	} else if(cmd == "pubDev")
 		myESP.action();
 	else if(cmd == "pubPerch")
@@ -106,9 +108,10 @@ void CommandLine::loop(){	// Implement command line
 		context.status();
 		network.status();
 		auxiliaires.status();
-	} else
-		Serial.println("Known commands : Aux on, Aux off, Moteur monte (mm), Moteur descent (md), Moteur stop (ms), pubDev, pubPerch, status, 1wscan, reset, bye");
-
+	} else {
+		String msg("Known commands : Aux on, Aux off, Moteur monte (mm), Moteur descent (md), Moteur stop (ms), pubDev, pubPerch, status, 1wscan, reset, bye");
+		context.Output(msg);
+	}
 	this->prompt();
 }
 #endif

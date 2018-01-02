@@ -146,13 +146,12 @@ private:
 public:
 	void status( void ){
 #ifdef DEV_ONLY
-#	ifdef SERIAL_ENABLED
-		Serial.print("Network\n\tmode :");
-		Serial.println( this->toString(this->data.mode) );
-		Serial.print("\tcurrent :");
-		Serial.print( this->toString(this->data.current) );
-		Serial.println( this->changed ? " (changed)" : " (kept)");
-#	endif
+		String msg = "Network\n\tmode :";
+		msg += this->toString(this->data.mode);
+		msg += "\n\tcurrent :";
+		msg += this->toString(this->data.current);
+		msg += this->changed ? " (changed)" : " (kept)";
+		context.Output(msg);
 #endif
 	}
 

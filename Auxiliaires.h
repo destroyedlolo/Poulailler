@@ -29,10 +29,7 @@ public:
 	}
 
 	void power( bool v ){
-#		ifdef SERIAL_ENABLED
-		Serial.println( v ? "Auxillaries ON" : "Auxillaries OFF" );
-#		endif
-
+		context.Output( v ? "Auxillaries ON" : "Auxillaries OFF" );
 		digitalWrite(AUXPWR_GPIO, !v);	// Caution : power is active when GPIO is LOW
 	}
 
@@ -53,12 +50,13 @@ public:
 	}
 
 	void status( void ){
-#if defined(DEV_ONLY) && defined(SERIAL_ENABLED)
-		Serial.print("Auxillaries : ");
-		Serial.print( this->isPowered()? "powered, " : "off, ");
-		Serial.print( this->water(true) ? "enought water, " : "lack of water, ");
-		Serial.println(this->SunLight() ? "Day" : "Night");
+#ifdef DEV_ONLY
+		String msg ="Auxillaries : ";
+		msg += this->isPowered()? "powered, " : "off, ";
+		msg += this->water(true) ? "enought water, " : "lack of water, ";
+		msg += this->SunLight() ? "Day" : "Night";
 
+		context.Output(msg);
 #endif
 	}
 

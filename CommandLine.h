@@ -11,10 +11,14 @@ class CommandLine {
 public:
 	CommandLine() : active(false) {};
 
-	void prompt() { Serial.println("ok >"); };
+	void prompt() {
+#		ifdef SERIAL_ENABLED
+		Serial.println("ok >"); 
+#		endif
+	};
 
-	void enter() { active = true; prompt(); };
-	void finished() { active = false; };
+	void enter() { active = true; prompt(); context.Output("Waiting for commands ..."); };
+	void finished() { active = false; context.Output("Automatic mode"); };
 	bool isActive() { return active; };
 
 	void loop();	// implemented in the main file

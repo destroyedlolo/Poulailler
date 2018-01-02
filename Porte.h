@@ -64,15 +64,11 @@ public:
 
 		switch( this->data.command ){
 		case Command::OPEN :
-#			ifdef SERIAL_ENABLED
-			Serial.println("Door : opening");
-#			endif
+			context.Output("Door : opening");
 			digitalWrite( GPIO::UP, 1);
 			return true;
 		case Command::CLOSE :
-#			ifdef SERIAL_ENABLED
-			Serial.println("Door : closing");
-#			endif
+			context.Output("Door : closing");
 			digitalWrite( GPIO::DOWN, 1);
 			return true;
 		default:

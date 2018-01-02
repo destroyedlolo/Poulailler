@@ -83,22 +83,26 @@ public:
 
 	void status( void ){
 #ifdef DEV_ONLY
-#	ifdef SERIAL_ENABLED
-		Serial.print("Context : RTC ");
-		Serial.println(this->isValid() ? "valid" : "invalid");
-		Serial.print("\tRTC data size : ");
-		Serial.println(offset);
-		Serial.print("\tTime offset : ");
-		Serial.println(this->keep.timeoffset);
-#	endif
+		String msg = "Context : RTC ";
+		msg += this->isValid() ? "valid" : "invalid";
+		msg += "\n\tRTC data size : ";
+		msg += offset;
+		msg += "\n\tTime offset : ";
+		msg += this->keep.timeoffset;
+
+		this->Output( msg );
 #endif
 	}
 
-	void Output( String &msg ){
+	void Output( const char *msg ){
 #		ifdef SERIAL_ENABLED
 		Serial.println( msg );
 #		endif
-		this->publish( MQTT_Error, msg );
+		this->publish( MQTT_Output, msg );
+	}
+
+	void Output( String &msg ){
+		this->Output( msg.c_str() );
 	}
 
 	class keepInRTC {
