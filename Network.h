@@ -132,7 +132,7 @@ private:
 #endif
 
 		while(!clientMQTT.connected()){
-			if(clientMQTT.connect(MQTT_CLIENT)){
+			if(clientMQTT.connect(MQTT_CLIENT,false)){
 #ifdef SERIAL_ENABLED
 				Serial.println("connected");
 #endif
@@ -146,7 +146,7 @@ private:
 			}
 		}
 
-		clientMQTT.subscribe(MQTT_Command.c_str());
+		clientMQTT.subscribe(MQTT_Command.c_str(), 1);	// QoS 1 to ensure message delivery at wakeup
 	}
 
 public:
