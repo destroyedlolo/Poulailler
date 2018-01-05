@@ -49,7 +49,7 @@ Automatisation de mon poulailler.
 
 ## Scenarii
 
-* Perchoir : every 5 miniutes. No action
+* Perchoir : every 5 minutes. No action
 * Aux : every 15 minutes
 	* Water : if too low, error at smart home dashboard level, prevent warming
 	* light : 

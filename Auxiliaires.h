@@ -9,18 +9,20 @@
 #define AUXPWR_GPIO	0
 
 #include "Context.h"
+#include "Repeater.h"
 
 #include <OWBus/DS2413.h>
 
 #define DSADDR	0x3a77553800000091	// Address of the DS2413
 
-class Auxiliaires {
+class Auxiliaires : public Repeater {
 	Context &context;
 	DS2413 gpio;
+	unsigned long int next;
 
 public:
-	Auxiliaires( Context &ctx ) : context( ctx ), 
-		gpio( context.getOWBus(), DSADDR ) { }
+	Auxiliaires( Context &ctx ) : Repeater( ctx, (INTERVAL_AUX-10) * 1e3, true ),
+		context( ctx ), gpio( context.getOWBus(), DSADDR ) { }
 
 	void setup( void ){
 		gpio.writePIOs( 0xff );	// Put GPIO as Input
@@ -28,9 +30,23 @@ public:
 		pinMode(AUXPWR_GPIO, OUTPUT);
 	}
 
+	void loop( void ){
+		if( !this->isPowered() )	// nothing was on way
+			this->Repeater::loop();
+		else if( millis() > this->next ){	// all auxiliaries are powerd
+			// Action to be done
+		}
+	}
+
+	void action( void ){
+		this->power(true);
+	}
+
 	void power( bool v ){
 		context.Output( v ? "Auxillaries ON" : "Auxillaries OFF" );
 		digitalWrite(AUXPWR_GPIO, !v);	// Caution : power is active when GPIO is LOW
+		if(v)
+			this->next = millis() + DELAY_AUX;	// initialise wakeup timer
 	}
 
 	bool isPowered( ){

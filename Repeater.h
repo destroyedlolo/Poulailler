@@ -28,7 +28,7 @@ public:
 		}
 	}
 
-	void loop(void){
+	void loop( void ){
 		if( context.getTime() > this->next ){
 			this->action();
 			this->next = context.getTime() + interval;

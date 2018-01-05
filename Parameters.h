@@ -42,8 +42,10 @@ String MQTT_Command = MQTT_Topic + "Command";
 #define DELAY_STARTUP	5		// Let a chance to enter in interactive mode at startup ( 5s )
 #define DELAY_LIGHT 500			// Delay during light sleep (in ms - 0.5s )
 
-#define INTERVAL_DEVICE 300		// Interval b/w sample for the device in S (5 minutes)
-#define INTERVAL_PERCHOIR 300	// Interval b/w sample for the "perchoir" in S (5 minutes)
+#define INTERVAL_DEVICE 300		// Interval b/w samples for the device in S (5 minutes)
+#define INTERVAL_PERCHOIR 300	// Interval b/w samples for the "perchoir" in S (5 minutes)
+#define INTERVAL_AUX 900		// Interval b/w samples for "auxiliaires" in S (15 minutes)
+#define DELAY_AUX 250			// Delay before light detector capacitor is loaded (in ms)
 
 	// Network related delays
 	// Caution to respect delays if in interactive mode

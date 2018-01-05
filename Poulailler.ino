@@ -172,6 +172,8 @@ void loop(){
 	network.loop();
 	myESP.loop();
 	perchoir.loop();
+	auxiliaires.loop();
+	still_busy |= auxiliaires.isPowered();	// Waiting for power to stabilize
 
 		/*
 		 * Command line if activated
