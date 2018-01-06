@@ -34,7 +34,19 @@ public:
 		if( !this->isPowered() )	// nothing was on way
 			this->Repeater::loop();
 		else if( millis() > this->next ){	// all auxiliaries are powerd
-			// Action to be done
+				/* Action to be done */
+			this->water(true);	// Refresh GPIOs
+			this->power(false);	// Save power
+
+				// Publish from saved data
+			context.publish( 
+				(MQTT_Topic+"Water/level").c_str(), 
+				this->water() ? "Enough" : "Empty"
+			);
+			context.publish(
+				(MQTT_Topic+"Sunlight").c_str(),
+				this->SunLight() ? "Day" : "Night"
+			);
 		}
 	}
 
@@ -69,7 +81,7 @@ public:
 #ifdef DEV_ONLY
 		String msg ="Auxillaries : ";
 		msg += this->isPowered()? "powered, " : "off, ";
-		msg += this->water(true) ? "enought water, " : "lack of water, ";
+		msg += this->water(true) ? "enough water, " : "lack of water, ";
 		msg += this->SunLight() ? "Day" : "Night";
 
 		context.Output(msg);
