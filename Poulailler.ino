@@ -115,7 +115,7 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 
 void handleMQTT(char* topic, byte* payload, unsigned int length){
 	String msg;
-	for(int i=0;i<length;i++)
+	for(unsigned int i=0;i<length;i++)
 		msg += (char)payload[i];
 
 #	ifdef SERIAL_ENABLED
