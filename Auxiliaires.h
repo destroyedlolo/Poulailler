@@ -6,8 +6,6 @@
 #ifndef AUXILIAIRE_H
 #define AUXILIAIRE_H
 
-#define AUXPWR_GPIO	0
-
 #include "Context.h"
 #include "Repeater.h"
 
