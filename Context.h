@@ -110,7 +110,7 @@ public:
 		uint32_t size;
 		uint32_t offset;
 
-	protected:
+	public:
 		keepInRTC( Context &ctx, uint32_t *w, uint32_t s ) : what(w), size(s) {
 		/* ->	ctx : context managing the RTC memory
 		 * 		w : which data to save
@@ -122,7 +122,6 @@ public:
 				ESP.rtcUserMemoryRead(this->offset, this->what, this->size);
 		}
 
-	public:
 		void save( void ){
 			ESP.rtcUserMemoryWrite( this->offset, this->what, this->size );
 		}
