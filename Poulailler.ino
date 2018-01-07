@@ -219,6 +219,7 @@ void loop(){
 		 */
 	if(!still_busy){
 		unsigned long int howlong = _min( myESP.remain(), perchoir.remain() );
+		howlong = _min( howlong, auxiliaires.remain() );
 
 		if( in_interactive ){
 			howlong = _min( howlong, DELAY_LIGHT );
