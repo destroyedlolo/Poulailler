@@ -31,6 +31,10 @@ IPAddress adr_gateway(192, 168, 0, 10);
 IPAddress adr_dns(192, 168, 0, 3);
 #endif
 
+	/* GPIOs */
+#define AUXPWR_GPIO	4 /* Power auxiliaries, on prod 0 */
+
+
 	/* MQTT */
 #define MQTT_CLIENT "TPoulailler"
 String MQTT_Topic("TPoulailler/");	// Topic's root
@@ -44,6 +48,7 @@ String MQTT_Command = MQTT_Topic + "Command";
 
 #define INTERVAL_DEVICE 300		// Interval b/w samples for the device in S (5 minutes)
 #define INTERVAL_PERCHOIR 300	// Interval b/w samples for the "perchoir" in S (5 minutes)
+
 #define INTERVAL_AUX 900		// Interval b/w samples for "auxiliaires" in S (15 minutes)
 #define DELAY_AUX 250			// Delay before light detector capacitor is loaded (in ms)
 
