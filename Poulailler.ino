@@ -57,12 +57,20 @@ Porte porte( context );
 Auxiliaires auxiliaires( context );
 
 #ifdef DEV_ONLY
+
 #include "CommandLine.h"
 CommandLine cmdline;
 
 #include <OWBus/OWDevice.h>
 
 void CommandLine::exec( String &cmd ){	// Implement command line
+	const int idx = cmd.indexOf(' ');
+	String arg;
+	if(idx != -1){
+		arg = cmd.substring(idx + 1);
+		cmd = cmd.substring(0, idx);
+	}
+
 	if(cmd == "bye"){
 		this->finished();
 		return;
@@ -86,14 +94,18 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 			}
 		}
 		context.Output(msg);
-	} else if(cmd == "pubDev")
-		myESP.action();
-	else if(cmd == "pubPerch")
-		perchoir.action();
-	else if(cmd == "Aux on")
-		auxiliaires.power(1);
-	else if(cmd == "Aux off")
-		auxiliaires.power(0);
+	} else if(cmd == "pub"){
+		if( arg == "Dev" )
+			myESP.action();
+		else if( arg == "Perch" )
+			perchoir.action();
+		else {
+			myESP.action();
+			perchoir.action();
+		}
+	}
+	else if(cmd == "Aux")
+		auxiliaires.power( arg == "on" );
 	else if(cmd == "moteur monte" || cmd == "mm")
 		porte.action( Porte::Command::OPEN );
 	else if(cmd == "moteur descent" || cmd == "md")
@@ -107,7 +119,7 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 		network.status();
 		auxiliaires.status();
 	} else {
-		String msg("Known commands : Aux on, Aux off, Moteur monte (mm), Moteur descent (md), Moteur stop (ms), pubDev, pubPerch, status, 1wscan, reset, bye");
+		String msg("Known commands : Aux {on|off}, Moteur monte (mm), Moteur descent (md), Moteur stop (ms), pub [Dev|Perch], status, 1wscan, reset, bye");
 		context.Output(msg);
 	}
 	this->prompt();
@@ -146,11 +158,15 @@ void setup(){
 	porte.setup();
 	auxiliaires.setup();
 
-#	ifdef SERIAL_ENABLED
+#ifdef SERIAL_ENABLED
 	Serial.println("\nInitial setup :\n----------");
 	context.status();
 	network.status();
+
+#	if AUXPWR_GPIO != 0 
+	Serial.println(	"****** DEV MOD *******" );
 #	endif
+#endif
 
 	context.save();	// At least, default values have been set
 	LED(LOW);
