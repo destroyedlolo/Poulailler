@@ -13,19 +13,37 @@
 
 #define DSADDR	0x3a77553800000091	// Address of the DS2413
 
-class Auxiliaires : public Repeater {
+class Auxiliaires : public Repeater, public Context::keepInRTC {
 	Context &context;
 	DS2413 gpio;
 	unsigned long int next;
 
+	struct {
+		unsigned long int wait4stab;	// Wait for the capacitor to load
+	} tokeep;	// data to be kept
 public:
-	Auxiliaires( Context &ctx ) : Repeater( ctx, (INTERVAL_AUX-10) * 1e3, true ),
-		context( ctx ), gpio( context.getOWBus(), DSADDR ) { }
+	Auxiliaires( Context &ctx ) : 
+		Repeater( ctx, (INTERVAL_AUX-10) * 1e3, true ),
+		Context::keepInRTC( ctx, (uint32_t *)&tokeep, sizeof(tokeep) ),
+		context( ctx ), 
+		gpio( context.getOWBus(), DSADDR ){
+			if( !ctx.isValid() )	// Default value
+				tokeep.wait4stab = DELAY_AUX;
+	}
 
 	void setup( void ){
 		gpio.writePIOs( 0xff );	// Put GPIO as Input
 		digitalWrite(AUXPWR_GPIO, 1);	// By default Aux power is disabled
 		pinMode(AUXPWR_GPIO, OUTPUT);
+	}
+
+	unsigned long int getWaitTime( void ){
+		return tokeep.wait4stab;
+	}
+
+	void setWaitTime( unsigned long int v ){
+		tokeep.wait4stab = v;
+		this->save();
 	}
 
 	void loop( void ){
@@ -56,7 +74,7 @@ public:
 		context.Output( v ? "Auxillaries ON" : "Auxillaries OFF" );
 		digitalWrite(AUXPWR_GPIO, !v);	// Caution : power is active when GPIO is LOW
 		if(v)
-			this->next = millis() + DELAY_AUX;	// initialise wakeup timer
+			this->next = millis() + tokeep.wait4stab;	// initialise wakeup timer
 	}
 
 	bool isPowered( ){
