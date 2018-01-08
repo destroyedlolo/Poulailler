@@ -34,6 +34,15 @@ public:
 		return this->tokeep.start + this->tokeep.interval;
 	}
 
+	void changeInterval( unsigned long int i ){
+		this->tokeep.interval = i;
+		this->save();
+	}
+
+	unsigned long int getInterval( void ){
+		return this->tokeep.interval;
+	}
+
 	void loop( void ){
 		if( context.getTime() > this->next() ){
 			this->action();

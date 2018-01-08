@@ -106,11 +106,16 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 	}
 	else if(cmd == "Aux")
 		auxiliaires.power( arg == "on" );
-	else if(cmd == "AuxStab"){
+	else if(cmd == "AuxInt"){
+		if( arg.length() )
+			auxiliaires.changeInterval( arg.toInt() );
+		else
+			context.Output( ( String("Stabilisation Interval : ") + String(auxiliaires.getInterval()) ).c_str() );
+	} else if(cmd == "AuxStab"){
 		if( arg.length() )
 			auxiliaires.setWaitTime( arg.toInt() );
 		else
-			context.Output( String(auxiliaires.getWaitTime()).c_str() );
+			context.Output( ( String("Stabilisation Aux : ") + String(auxiliaires.getWaitTime()) ).c_str() );
 	} else if(cmd == "moteur monte" || cmd == "mm")
 		porte.action( Porte::Command::OPEN );
 	else if(cmd == "moteur descent" || cmd == "md")
@@ -124,7 +129,7 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 		network.status();
 		auxiliaires.status();
 	} else {
-		String msg("Known commands : Aux {on|off}, AuxStab [val], Moteur monte (mm), Moteur descent (md), Moteur stop (ms), pub [Dev|Perch], status, 1wscan, reset, bye");
+		String msg("Known commands : Aux {on|off}, AuxInt [val], AuxStab [val], Moteur monte (mm), Moteur descent (md), Moteur stop (ms), pub [Dev|Perch], status, 1wscan, reset, bye");
 		context.Output(msg);
 	}
 	this->prompt();
