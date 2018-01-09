@@ -103,8 +103,16 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 			myESP.action();
 			perchoir.action();
 		}
-	}
-	else if(cmd == "Aux")
+	} else if(cmd == "Net"){
+		if(arg == "M")
+			network.setMode( Network::NetworkMode::MAISON );
+		else if(arg == "D")
+			network.setMode( Network::NetworkMode::DOMOTIQUE );
+		else if(arg == "MD")
+			network.setMode( Network::NetworkMode::SAFEMD );
+		else
+			network.setMode( Network::NetworkMode::SAFEDM );
+	} else if(cmd == "Aux")
 		auxiliaires.power( arg == "on" );
 	else if(cmd == "AuxInt"){
 		if( arg.length() )
@@ -139,7 +147,7 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 		network.status();
 		auxiliaires.status();
 	} else {
-		String msg("Known commands : Aux {on|off}, ESPInt [val], PerchInt [val], AuxInt [val], AuxStab [val], Moteur monte (mm), Moteur descent (md), Moteur stop (ms), pub [Dev|Perch], status, 1wscan, reset, bye");
+		String msg("Known commands : Aux {on|off}, ESPInt [val], PerchInt [val], AuxInt [val], AuxStab [val], Net {M|D|MD|DM}, Moteur monte (mm), Moteur descent (md), Moteur stop (ms), pub [Dev|Perch], status, 1wscan, reset, bye");
 		context.Output(msg);
 	}
 	this->prompt();
