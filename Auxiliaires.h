@@ -80,8 +80,12 @@ public:
 			this->next = millis() + conf.wait4stab;	// initialise wakeup timer
 	}
 
-	bool isPowered( ){
+	bool isPowered( void ){
 		return !digitalRead(AUXPWR_GPIO);
+	}
+
+	bool isStabilised( void ){
+		return( this->isPowered() && (millis() > this->next) );
 	}
 
 	bool SunLight( bool refresh=true ){
