@@ -51,7 +51,7 @@ public:
 		}
 	}
 
-	unsigned long int remain(void){
+	unsigned long int remain( void ){
 	/* Return the duration before the next activation
 	 * in mS
 	 */
@@ -59,6 +59,10 @@ public:
 			return 0;
 		else
 			return( this->next() - context.getTime() );
+	}
+
+	void reset( void ){
+		this->tokeep.start = context.getTime();
 	}
 };
 #endif
