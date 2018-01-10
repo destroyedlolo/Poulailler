@@ -53,12 +53,28 @@ Automatisation de mon poulailler.
 
 ## Scenarii
 
-* Perchoir : every 5 minutes. No action
-* Aux : every 15 minutes
+### Startup
+
+The goal is the reach a stable and known door position. MQTT data has to be ignored has we don't know if they are valid or outdated.
+
+1. Day or Night ?
+	1. Power Aux
+	1. Reading Day (publish **water** as well)
+
+1. Door position ?
+	* if **Day**
+		- Door open
+	* if **Night**
+		- Door close
+
+### Running
+WIP : to be ignored.
+* ~~Perchoir : every 5 minutes. No action~~
+* ~~Aux : every 15 minutes~~
 	* Water : if too low, error at smart home dashboard level, prevent warming
-	* light : 
-		* If Day -> Night close door after 5'
-		* If Night -> Day open the door
+	* ~~light :~~ 
+		* ~~If Day -> Night close door after 5'~~
+		* ~~If Night -> Day open the door~~
 
 ## Connector
 
