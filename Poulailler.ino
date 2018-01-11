@@ -210,13 +210,35 @@ void setup(){
 void loop(){
 	bool still_busy = false; // Do we have something left to do ?
 	bool in_interactive = false;
+
 		/*
-		 * Components'
+		 * Recurrent & automatic tasks
+		 * (messages handling, automatic publishing, ...)
 		 */
 	network.loop();
 	myESP.loop();
 	perchoir.loop();
-	auxiliaires.loop();
+
+		/*
+		 * Complexes tasks
+		 */
+	switch( context.getStatus() ){
+	case Context::Steps::STARTUP_STARTUP :
+		auxiliaires.power( true );
+		context.setStatus( Context::Steps::STARTUP_AUXPWR );
+		break;
+	case Context::Steps::STARTUP_AUXPWR :
+		if( auxiliaires.isStabilised() ){ // test jour/nuit
+		}
+		break;
+	default:	// Up and runing
+		auxiliaires.loop();
+		break;
+	}
+
+		/*
+		 * Is something on way ?
+		 */
 	still_busy |= auxiliaires.isPowered();	// Waiting for power to stabilize
 
 		/*

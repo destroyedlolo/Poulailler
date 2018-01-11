@@ -18,10 +18,18 @@ class Context {
 
 	OneWire oneWire;
 	OWBus bus;
-	
+
+public:
+	enum Steps {
+		STARTUP_STARTUP = 0,
+		STARTUP_AUXPWR			// Aux powered
+	};
+
+private:
 	struct {
 		uint32_t key;	// is RTC valid ?
 		unsigned long int timeoffset;	// Offset for millis()
+		enum Steps status;
 	} keep;
 
 public:
@@ -35,6 +43,7 @@ public:
 		if( !this->RTCvalid ){	// Initial values
 			keep.timeoffset = 0; // Reset timekeeper
 			keep.key = ESP.getFlashChipId();
+			keep.status = Steps::STARTUP_STARTUP;
 
 			/* RTCvalid remains invalid in order to let other modules
 			 * to initialise themselves to default values
@@ -43,6 +52,13 @@ public:
 
 		offset = sizeof(keep);
 	}
+
+	void setStatus( enum Steps s ){
+		this->keep.status = s;
+		this->save();
+	}
+
+	enum Steps getStatus( void ){ return this->keep.status; }
 
 	void setNetwork( Network *n ){ net = n; }
 
