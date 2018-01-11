@@ -27,9 +27,10 @@ public:
 
 private:
 	struct {
-		uint32_t key;	// is RTC valid ?
+		uint32_t key;				// is RTC valid ?
 		unsigned long int timeoffset;	// Offset for millis()
-		enum Steps status;
+		enum Steps status;			// startup status
+		unsigned int daylight : 1;	// day or night
 	} keep;
 
 public:
@@ -57,8 +58,13 @@ public:
 		this->keep.status = s;
 		this->save();
 	}
-
 	enum Steps getStatus( void ){ return this->keep.status; }
+
+	bool getDaylight( void ){ return this->keep.daylight; }
+	void setDaylight( bool v ){
+		this->keep.daylight = v;
+		this->save();
+	}
 
 	void setNetwork( Network *n ){ net = n; }
 
