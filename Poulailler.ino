@@ -228,7 +228,10 @@ void loop(){
 		context.setStatus( Context::Steps::STARTUP_AUXPWR );
 		break;
 	case Context::Steps::STARTUP_AUXPWR :
-		if( auxiliaires.isStabilised() ){ // test jour/nuit
+		if( auxiliaires.isStabilised() ){ // Test if it's day or night
+			if( auxiliaires.SunLight( true ) ){	// Day
+			} else {	// Night
+			}
 		}
 		break;
 	default:	// Up and runing

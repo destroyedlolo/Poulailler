@@ -105,7 +105,7 @@ public:
 		String msg ="Auxillaries : ";
 		msg += this->isPowered()? "powered, " : "off, ";
 		msg += this->water(true) ? "enough water, " : "lack of water, ";
-		msg += this->SunLight() ? "Day" : "Night";
+		msg += this->SunLight(false) ? "Day" : "Night";
 
 		context.Output(msg);
 #endif
