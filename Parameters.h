@@ -52,7 +52,7 @@ String MQTT_Command = MQTT_Topic + "Command";
 #define INTERVAL_AUX 900		// Interval b/w samples for "auxiliaires" in S (15 minutes)
 #define DELAY_AUX 250			// Delay before light detector capacitor is loaded (in ms)
 
-#define TIMEOUT_DOOR	500		// Timeout for the door to reach stops in mS
+#define TIMEOUT_DOOR	5000	// Timeout for the door to reach stops in mS
 
 	// Network related delays
 	// Caution to respect delays if in interactive mode
