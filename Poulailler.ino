@@ -134,20 +134,28 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 			perchoir.changeInterval( arg.toInt() );
 		else
 			context.Output( ( String("Interval Perchoir : ") + String(perchoir.getInterval()) ).c_str() );
-	} else if(cmd == "moteur monte" || cmd == "mm")
+	} else if(cmd == "PorteOuverte" || cmd == "po")
 		porte.action( Porte::Command::OPEN );
-	else if(cmd == "moteur descent" || cmd == "md")
+	else if(cmd == "PorteFermee" || cmd == "pf")
 		porte.action( Porte::Command::CLOSE );
-	else if(cmd == "moteur stop" || cmd == "ms")
+	else if(cmd == "PorteStop" || cmd == "ps")
 		porte.action( Porte::Command::STOP );
+	else if(cmd == "PorteTimeout" || cmd == "pt")
+		if( arg.length() )
+			porte.setTimeout( arg.toInt() );
+		else
+			context.Output( ( String("Timeout porte : ") + String(porte.getTimeout()) ).c_str() );
 	else if(cmd == "reset")
 		ESP.restart();
-	else if(cmd == "status"){
+	else if(cmd == "statut" || cmd == "status" ){
 		context.status();
 		network.status();
 		auxiliaires.status();
 	} else {
-		String msg("Known commands : Aux {on|off}, ESPInt [val], PerchInt [val], AuxInt [val], AuxStab [val], Net {M|D|MD|DM}, Moteur monte (mm), Moteur descent (md), Moteur stop (ms), pub [Dev|Perch], status, 1wscan, reset, bye");
+		String msg("Commandes : Aux {on|off}, Net {M|D|MD|DM},\n"
+		"ESPInt [val], PerchInt [val], AuxInt [val], AuxStab [val],\n"
+		"PorteOuverte (po), PorteFermee (pf), PorteStop (ps), PorteTimeout (pt) {val}\n"
+		"pub [Dev|Perch], statut, 1wscan, reset, bye");
 		context.Output(msg);
 	}
 	this->prompt();
