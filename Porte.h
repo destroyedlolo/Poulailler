@@ -59,8 +59,10 @@ public:
 	 * -> Command::NONE : restore the last movement
 	 * <- is the door moving ?
 	 */
-		if( this->data.command == Command::ERROR )	// Already in error
+		if( this->data.command == Command::ERROR ){	// Already in error
+			context.Output("Pas de mouvement : porte en ERREUR.");
 			return false;
+		}
 
 		if( movement != Command::NONE ){
 			this->data.command = movement;
