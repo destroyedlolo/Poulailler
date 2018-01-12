@@ -145,6 +145,8 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 			porte.setTimeout( arg.toInt() );
 		else
 			context.Output( ( String("Timeout porte : ") + String(porte.getTimeout()) ).c_str() );
+	else if(cmd == "PorteOk")
+		porte.clearErrorCondition();
 	else if(cmd == "reset")
 		ESP.restart();
 	else if(cmd == "statut" || cmd == "status" ){
@@ -154,7 +156,7 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 	} else {
 		String msg("Commandes : Aux {on|off}, Net {M|D|MD|DM},\n"
 		"ESPInt [val], PerchInt [val], AuxInt [val], AuxStab [val],\n"
-		"PorteOuverte (po), PorteFermee (pf), PorteStop (ps), PorteTimeout (pt) {val}\n"
+		"PorteOuverte (po), PorteFermee (pf), PorteStop (ps), PorteTimeout (pt) {val}, PorteOk\n"
 		"pub [Dev|Perch], statut, 1wscan, reset, bye");
 		context.Output(msg);
 	}

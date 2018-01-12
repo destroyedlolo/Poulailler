@@ -59,6 +59,9 @@ public:
 	 * -> Command::NONE : restore the last movement
 	 * <- is the door moving ?
 	 */
+		if( this->data.command == Command::ERROR )	// Already in error
+			return false;
+
 		if( movement != Command::NONE ){
 			this->data.command = movement;
 			this->save();
@@ -86,6 +89,11 @@ public:
 		default:
 			return false;	// the door is not in movement
 		}
+	}
+
+	void clearErrorCondition( void ){
+		this->data.command = Command::NONE;	// Reset error condition
+		this->action( Command::STOP );		// Force GPIO to a known condition
 	}
 
 	bool isMoving( void ){
