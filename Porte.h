@@ -123,6 +123,7 @@ public:
 			return false;	// no movment on way
 	}
 
+	bool inError( void ){ return(this->data.command == Command::ERROR); }
 
 	unsigned long getTimeout( void ){ return this->data.timeout; }
 	void setTimeout( signed long v ){
