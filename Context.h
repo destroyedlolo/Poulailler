@@ -22,7 +22,8 @@ class Context {
 public:
 	enum Steps {
 		STARTUP_STARTUP = 0,
-		STARTUP_AUXPWR			// Aux powered
+		STARTUP_AUXPWR,			// Aux powered
+		STARTUP_WAIT4DOOR,		// Wait for door to stops
 	};
 
 private:

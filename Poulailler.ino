@@ -224,14 +224,21 @@ void loop(){
 		 */
 	switch( context.getStatus() ){
 	case Context::Steps::STARTUP_STARTUP :
+		context.Output("Step : STARTUP_STARTUP");
 		auxiliaires.power( true );
 		context.setStatus( Context::Steps::STARTUP_AUXPWR );
 		break;
 	case Context::Steps::STARTUP_AUXPWR :
+		context.Output("Step : STARTUP_AUXPWR");
 		if( auxiliaires.isStabilised() ){ // Test if it's day or night
 			if( auxiliaires.SunLight( true ) ){	// Day
+				context.setDaylight( true );
+				porte.action( Porte::Command::OPEN );
 			} else {	// Night
+				context.setDaylight( false );
+				porte.action( Porte::Command::CLOSE );
 			}
+			context.setStatus( Context::Steps::STARTUP_WAIT4DOOR );
 		}
 		break;
 	default:	// Up and runing
