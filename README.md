@@ -51,6 +51,11 @@ Automatisation de mon poulailler.
 * MX1508 H-Bridge
 * 3a77553800000091 : DS2413 - Day light probe
 
+## Test Bat
+
+ADC = 5v * 25.1 / (100 + 25.1) = 1.0032v
+I = 5 / 125.1K = ~ 40uA
+
 ## Scenarii
 
 ### Startup
