@@ -10,8 +10,6 @@
 #include "Context.h"
 #include "Repeater.h"
 
-ADC_MODE(ADC_VCC);
-
 class Device : public Repeater {
 	Context &context;
 
@@ -19,11 +17,14 @@ public :
 	Device(Context &ctx) : Repeater( ctx, (INTERVAL_DEVICE-10) * 1e3, true ), context(ctx) {}	// '-10' ensures a launch if the "sample" time is the same
 
 	void action( void ){
+		unsigned int t = analogRead(A0) * 5000 / 1024;
 #ifdef SERIAL_ENABLED
 		Serial.print("Power : ");
-		Serial.println(ESP.getVcc());
+		Serial.print( analogRead(A0) );
+		Serial.print(" -> ");
+		Serial.println( t );
 #endif
-		context.publish( (MQTT_Topic + "Alim").c_str(), String( ESP.getVcc() ).c_str() );
+		context.publish( (MQTT_Topic + "Alim").c_str(), String( t ).c_str() );
 
 #ifdef SERIAL_ENABLED
 		Serial.print("Memory : ");
