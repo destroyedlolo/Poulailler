@@ -156,7 +156,7 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 	} else if(cmd == "calVcc"){
 #	ifdef SERIAL_ENABLED
 		while(!Serial.available()){
-			unsigned int v = analogRead(A0), t = v * 5000 / 1024;
+			unsigned int v = analogRead(A0), t = v * 5000 / myESP.getCaliber();
 			Serial.print("Power : ");
 			Serial.print( v );
 			Serial.print(" -> ");
@@ -164,12 +164,17 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 			delay( 500 );
 		}
 #endif
+	} else if(cmd == "maxVcc"){
+		if( arg.length() )
+			myESP.setCaliber( arg.toInt() );
+		else
+			context.Output( ( String("Interval ESP : ") + String(myESP.getCaliber()) ).c_str() );
 	} else {
 		String msg("Commandes : Aux {on|off}, Net {M|D|MD|DM},\n"
 		"ESPInt [val], PerchInt [val], AuxInt [val], AuxStab [val],\n"
 		"PorteOuverte (po), PorteFermee (pf), PorteStop (ps), PorteTimeout (pt) {val}, PorteOk\n"
-		"calVcc, \n"	// maxVcc [val]
-		"pub [Dev|Perch], calVcc, statut, 1wscan, reset, bye");
+		"calVcc, maxVcc [val]\n"
+		"pub [Dev|Perch], statut, 1wscan, reset, bye");
 		context.Output(msg);
 	}
 	this->prompt();
