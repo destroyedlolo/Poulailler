@@ -149,15 +149,27 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 		porte.clearErrorCondition();
 	else if(cmd == "reset")
 		ESP.restart();
-	else if(cmd == "statut" || cmd == "status" ){
+	else if(cmd == "statut" || cmd == "status"){
 		context.status();
 		network.status();
 		auxiliaires.status();
+	} else if(cmd == "calVcc"){
+#	ifdef SERIAL_ENABLED
+		while(!Serial.available()){
+			unsigned int v = analogRead(A0), t = v * 5000 / 1024;
+			Serial.print("Power : ");
+			Serial.print( v );
+			Serial.print(" -> ");
+			Serial.println( t );
+			delay( 500 );
+		}
+#endif
 	} else {
 		String msg("Commandes : Aux {on|off}, Net {M|D|MD|DM},\n"
 		"ESPInt [val], PerchInt [val], AuxInt [val], AuxStab [val],\n"
 		"PorteOuverte (po), PorteFermee (pf), PorteStop (ps), PorteTimeout (pt) {val}, PorteOk\n"
-		"pub [Dev|Perch], statut, 1wscan, reset, bye");
+		"calVcc, \n"	// maxVcc [val]
+		"pub [Dev|Perch], calVcc, statut, 1wscan, reset, bye");
 		context.Output(msg);
 	}
 	this->prompt();

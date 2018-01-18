@@ -17,10 +17,10 @@ public :
 	Device(Context &ctx) : Repeater( ctx, (INTERVAL_DEVICE-10) * 1e3, true ), context(ctx) {}	// '-10' ensures a launch if the "sample" time is the same
 
 	void action( void ){
-		unsigned int t = analogRead(A0) * 5000 / 1024;
+		unsigned int v = analogRead(A0), t = v * 5000 / 1024;
 #ifdef SERIAL_ENABLED
 		Serial.print("Power : ");
-		Serial.print( analogRead(A0) );
+		Serial.print( v );
 		Serial.print(" -> ");
 		Serial.println( t );
 #endif
