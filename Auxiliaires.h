@@ -6,8 +6,6 @@
 #ifndef AUXILIAIRE_H
 #define AUXILIAIRE_H
 
-#define AUXPWR_GPIO	0
-
 #include "Context.h"
 #include "Repeater.h"
 
@@ -20,14 +18,35 @@ class Auxiliaires : public Repeater {
 	DS2413 gpio;
 	unsigned long int next;
 
+	struct {
+		unsigned long int wait4stab;	// Wait for the capacitor to load
+	} conf;	// data to be kept
+	Context::keepInRTC *agarder;
+
 public:
-	Auxiliaires( Context &ctx ) : Repeater( ctx, (INTERVAL_AUX-10) * 1e3, true ),
-		context( ctx ), gpio( context.getOWBus(), DSADDR ) { }
+	Auxiliaires( Context &ctx ) : 
+	Repeater( ctx, (INTERVAL_AUX-10) * 1e3, true ),
+	context( ctx ), 
+	gpio( context.getOWBus(), DSADDR ){
+		agarder = new Context::keepInRTC( ctx, (uint32_t *)&conf, sizeof(conf) );
+
+		if( !ctx.isValid() )	// Default value
+			conf.wait4stab = DELAY_AUX;
+	}
 
 	void setup( void ){
 		gpio.writePIOs( 0xff );	// Put GPIO as Input
 		digitalWrite(AUXPWR_GPIO, 1);	// By default Aux power is disabled
 		pinMode(AUXPWR_GPIO, OUTPUT);
+	}
+
+	unsigned long int getWaitTime( void ){
+		return conf.wait4stab;
+	}
+
+	void setWaitTime( unsigned long int v ){
+		conf.wait4stab = v;
+		this->agarder->save();
 	}
 
 	void loop( void ){
@@ -58,11 +77,15 @@ public:
 		context.Output( v ? "Auxillaries ON" : "Auxillaries OFF" );
 		digitalWrite(AUXPWR_GPIO, !v);	// Caution : power is active when GPIO is LOW
 		if(v)
-			this->next = millis() + DELAY_AUX;	// initialise wakeup timer
+			this->next = millis() + conf.wait4stab;	// initialise wakeup timer
 	}
 
-	bool isPowered( ){
+	bool isPowered( void ){
 		return !digitalRead(AUXPWR_GPIO);
+	}
+
+	bool isStabilised( void ){
+		return( this->isPowered() && (millis() > this->next) );
 	}
 
 	bool SunLight( bool refresh=true ){
@@ -82,7 +105,7 @@ public:
 		String msg ="Auxillaries : ";
 		msg += this->isPowered()? "powered, " : "off, ";
 		msg += this->water(true) ? "enough water, " : "lack of water, ";
-		msg += this->SunLight() ? "Day" : "Night";
+		msg += this->SunLight(false) ? "Day" : "Night";
 
 		context.Output(msg);
 #endif

@@ -11,10 +11,13 @@
 #ifndef PORTE_H
 #define PORTE_H
 
+#include "Context.h"
+
 class Porte : public Context::keepInRTC {
 public:
 	enum Command {	// What is requested to the gate
 		NONE,	// Stay at it is
+		ERROR,	// Door can't move
 		STOP,	// Stop the door
 		OPEN,
 		CLOSE
@@ -29,6 +32,8 @@ private:
 
 	struct { 
 		enum Command command;
+		unsigned long timeout;
+		unsigned long startmvt;	// Start of the current movement
 	} data;	// data to be kept
 
 public:
@@ -44,6 +49,7 @@ public:
 	Porte( Context &ctx ) : Context::keepInRTC( ctx, (uint32_t *)&data, sizeof(data) ) {
 		if( !ctx.isValid() ){	// Default value
 			this->data.command = Command::STOP;
+			this->data.timeout = TIMEOUT_DOOR;
 			this->save();
 		}
 	}
@@ -53,6 +59,11 @@ public:
 	 * -> Command::NONE : restore the last movement
 	 * <- is the door moving ?
 	 */
+		if( this->data.command == Command::ERROR ){	// Already in error
+			context.Output("Pas de mouvement : porte en ERREUR.");
+			return false;
+		}
+
 		if( movement != Command::NONE ){
 			this->data.command = movement;
 			this->save();
@@ -64,16 +75,27 @@ public:
 
 		switch( this->data.command ){
 		case Command::OPEN :
-			context.Output("Door : opening");
+			context.Output("Ouverture porte");
 			digitalWrite( GPIO::UP, 1);
+			this->data.startmvt = context.getTime();
+			this->save();
 			return true;
 		case Command::CLOSE :
-			context.Output("Door : closing");
+			context.Output("Fermeture porte");
 			digitalWrite( GPIO::DOWN, 1);
+			this->data.startmvt = context.getTime();
+			this->save();
 			return true;
+		case Command::ERROR :
+			context.Output("Timeout sur le mouvement de la porte : PROBLEME !!!");
 		default:
 			return false;	// the door is not in movement
 		}
+	}
+
+	void clearErrorCondition( void ){
+		this->data.command = Command::NONE;	// Reset error condition
+		this->action( Command::STOP );		// Force GPIO to a known condition
 	}
 
 	bool isMoving( void ){
@@ -94,8 +116,21 @@ public:
 	 */
 		if(digitalRead( GPIO::END ))
 			return this->action( Command::STOP );
-		else
-			return this->isMoving();
+		else if( this->isMoving() ){
+			if( context.getTime() > ( this->data.startmvt + this->data.timeout ) )	// Movment too long
+				return this->action( Command::ERROR );
+			else
+				return true;	// movement on way
+		} else
+			return false;	// no movment on way
+	}
+
+	bool inError( void ){ return(this->data.command == Command::ERROR); }
+
+	unsigned long getTimeout( void ){ return this->data.timeout; }
+	void setTimeout( signed long v ){
+		this->data.timeout = v;
+		this->save();
 	}
 };
 #endif

@@ -5,6 +5,8 @@
 #ifndef COMMANDLINE_H
 #define COMMANDLINE_H	0.0100
 
+#include <string>
+
 class CommandLine {
 	bool active;	// Are we in command line mode ?
 

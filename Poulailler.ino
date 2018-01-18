@@ -57,12 +57,20 @@ Porte porte( context );
 Auxiliaires auxiliaires( context );
 
 #ifdef DEV_ONLY
+
 #include "CommandLine.h"
 CommandLine cmdline;
 
 #include <OWBus/OWDevice.h>
 
 void CommandLine::exec( String &cmd ){	// Implement command line
+	const int idx = cmd.indexOf(' ');
+	String arg;
+	if(idx != -1){
+		arg = cmd.substring(idx + 1);
+		cmd = cmd.substring(0, idx);
+	}
+
 	if(cmd == "bye"){
 		this->finished();
 		return;
@@ -86,28 +94,82 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 			}
 		}
 		context.Output(msg);
-	} else if(cmd == "pubDev")
-		myESP.action();
-	else if(cmd == "pubPerch")
-		perchoir.action();
-	else if(cmd == "Aux on")
-		auxiliaires.power(1);
-	else if(cmd == "Aux off")
-		auxiliaires.power(0);
-	else if(cmd == "moteur monte" || cmd == "mm")
+	} else if(cmd == "pub"){
+		if( arg == "Dev" )
+			myESP.action();
+		else if( arg == "Perch" )
+			perchoir.action();
+		else {
+			myESP.action();
+			perchoir.action();
+		}
+	} else if(cmd == "Net"){
+		if(arg == "M")
+			network.setMode( Network::NetworkMode::MAISON );
+		else if(arg == "D")
+			network.setMode( Network::NetworkMode::DOMOTIQUE );
+		else if(arg == "MD")
+			network.setMode( Network::NetworkMode::SAFEMD );
+		else
+			network.setMode( Network::NetworkMode::SAFEDM );
+	} else if(cmd == "Aux")
+		auxiliaires.power( arg == "on" );
+	else if(cmd == "AuxInt"){
+		if( arg.length() )
+			auxiliaires.changeInterval( arg.toInt() );
+		else
+			context.Output( ( String("Interval Aux : ") + String(auxiliaires.getInterval()) ).c_str() );
+	} else if(cmd == "AuxStab"){
+		if( arg.length() )
+			auxiliaires.setWaitTime( arg.toInt() );
+		else
+			context.Output( ( String("Stabilisation Aux : ") + String(auxiliaires.getWaitTime()) ).c_str() );
+	} else if(cmd == "ESPInt"){
+		if( arg.length() )
+			myESP.changeInterval( arg.toInt() );
+		else
+			context.Output( ( String("Interval ESP : ") + String(myESP.getInterval()) ).c_str() );
+	} else if(cmd == "PerchInt"){
+		if( arg.length() )
+			perchoir.changeInterval( arg.toInt() );
+		else
+			context.Output( ( String("Interval Perchoir : ") + String(perchoir.getInterval()) ).c_str() );
+	} else if(cmd == "PorteOuverte" || cmd == "po")
 		porte.action( Porte::Command::OPEN );
-	else if(cmd == "moteur descent" || cmd == "md")
+	else if(cmd == "PorteFermee" || cmd == "pf")
 		porte.action( Porte::Command::CLOSE );
-	else if(cmd == "moteur stop" || cmd == "ms")
+	else if(cmd == "PorteStop" || cmd == "ps")
 		porte.action( Porte::Command::STOP );
+	else if(cmd == "PorteTimeout" || cmd == "pt")
+		if( arg.length() )
+			porte.setTimeout( arg.toInt() );
+		else
+			context.Output( ( String("Timeout porte : ") + String(porte.getTimeout()) ).c_str() );
+	else if(cmd == "PorteOk")
+		porte.clearErrorCondition();
 	else if(cmd == "reset")
 		ESP.restart();
-	else if(cmd == "status"){
+	else if(cmd == "statut" || cmd == "status"){
 		context.status();
 		network.status();
 		auxiliaires.status();
+	} else if(cmd == "calVcc"){
+#	ifdef SERIAL_ENABLED
+		while(!Serial.available()){
+			unsigned int v = analogRead(A0), t = v * 5000 / 1024;
+			Serial.print("Power : ");
+			Serial.print( v );
+			Serial.print(" -> ");
+			Serial.println( t );
+			delay( 500 );
+		}
+#endif
 	} else {
-		String msg("Known commands : Aux on, Aux off, Moteur monte (mm), Moteur descent (md), Moteur stop (ms), pubDev, pubPerch, status, 1wscan, reset, bye");
+		String msg("Commandes : Aux {on|off}, Net {M|D|MD|DM},\n"
+		"ESPInt [val], PerchInt [val], AuxInt [val], AuxStab [val],\n"
+		"PorteOuverte (po), PorteFermee (pf), PorteStop (ps), PorteTimeout (pt) {val}, PorteOk\n"
+		"calVcc, \n"	// maxVcc [val]
+		"pub [Dev|Perch], calVcc, statut, 1wscan, reset, bye");
 		context.Output(msg);
 	}
 	this->prompt();
@@ -146,11 +208,15 @@ void setup(){
 	porte.setup();
 	auxiliaires.setup();
 
-#	ifdef SERIAL_ENABLED
+#ifdef SERIAL_ENABLED
 	Serial.println("\nInitial setup :\n----------");
 	context.status();
 	network.status();
+
+#	if AUXPWR_GPIO != 0 
+	Serial.println(	"****** DEV MOD *******" );
 #	endif
+#endif
 
 	context.save();	// At least, default values have been set
 	LED(LOW);
@@ -166,13 +232,51 @@ void setup(){
 void loop(){
 	bool still_busy = false; // Do we have something left to do ?
 	bool in_interactive = false;
+
 		/*
-		 * Components'
+		 * Recurrent & automatic tasks
+		 * (messages handling, automatic publishing, ...)
 		 */
 	network.loop();
 	myESP.loop();
 	perchoir.loop();
-	auxiliaires.loop();
+
+		/*
+		 * Complexes tasks
+		 */
+	switch( context.getStatus() ){
+	case Context::Steps::STARTUP_STARTUP :
+		auxiliaires.power( true );
+		context.setStatus( Context::Steps::STARTUP_AUXPWR );
+		context.Output("Step : STARTUP_AUXPWR");
+		break;
+	case Context::Steps::STARTUP_AUXPWR :
+		if( auxiliaires.isStabilised() ){ // Test if it's day or night
+			if( auxiliaires.SunLight( true ) ){	// Day
+				context.setDaylight( true );
+				porte.action( Porte::Command::OPEN );
+			} else {	// Night
+				context.setDaylight( false );
+				porte.action( Porte::Command::CLOSE );
+			}
+			context.setStatus( Context::Steps::STARTUP_WAIT4DOOR );
+			context.Output("Step : STARTUP_WAIT4DOOR");
+		}
+		break;
+	case Context::Steps::STARTUP_WAIT4DOOR :
+		if( !porte.isStillMoving() ){
+			context.setStatus( Context::Steps::WORKING );
+			context.Output("Démarrage terminé");
+		}
+		break;
+	default:	// Up and runing
+		auxiliaires.loop();
+		break;
+	}
+
+		/*
+		 * Is something on way ?
+		 */
 	still_busy |= auxiliaires.isPowered();	// Waiting for power to stabilize
 
 		/*
@@ -198,6 +302,7 @@ void loop(){
 		 */
 	if(!still_busy){
 		unsigned long int howlong = _min( myESP.remain(), perchoir.remain() );
+		howlong = _min( howlong, auxiliaires.remain() );
 
 		if( in_interactive ){
 			howlong = _min( howlong, DELAY_LIGHT );

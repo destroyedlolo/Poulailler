@@ -31,9 +31,13 @@ IPAddress adr_gateway(192, 168, 0, 10);
 IPAddress adr_dns(192, 168, 0, 3);
 #endif
 
+	/* GPIOs */
+#define AUXPWR_GPIO	0 /* Power auxiliaries, on prod 0 */
+
+
 	/* MQTT */
-#define MQTT_CLIENT "TPoulailler"
-String MQTT_Topic("TPoulailler/");	// Topic's root
+#define MQTT_CLIENT "Poulailler"
+String MQTT_Topic("Poulailler/");	// Topic's root
 String MQTT_Error = MQTT_Topic + "Error";
 String MQTT_Output = MQTT_Topic + "Message";
 String MQTT_Command = MQTT_Topic + "Command";
@@ -44,8 +48,11 @@ String MQTT_Command = MQTT_Topic + "Command";
 
 #define INTERVAL_DEVICE 300		// Interval b/w samples for the device in S (5 minutes)
 #define INTERVAL_PERCHOIR 300	// Interval b/w samples for the "perchoir" in S (5 minutes)
+
 #define INTERVAL_AUX 900		// Interval b/w samples for "auxiliaires" in S (15 minutes)
 #define DELAY_AUX 250			// Delay before light detector capacitor is loaded (in ms)
+
+#define TIMEOUT_DOOR	5000	// Timeout for the door to reach stops in mS
 
 	// Network related delays
 	// Caution to respect delays if in interactive mode

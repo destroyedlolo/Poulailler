@@ -163,7 +163,7 @@ public:
 
 	Network( Context &ctx ) : Context::keepInRTC( ctx, (uint32_t *)&data, sizeof(data) ), changed(false){
 		if( !ctx.isValid() ){	// Default value
-			this->data.mode = NetworkMode::SAFEMD;
+			this->data.mode = NetworkMode::SAFEDM;
 			this->data.current = this->getNominalNetwork();
 			this->changed = true;
 			this->save();

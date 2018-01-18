@@ -1,4 +1,6 @@
 EESchema Schematic File Version 2
+LIBS:Poulailler-rescue
+LIBS:maxim
 LIBS:power
 LIBS:transistors
 LIBS:conn
@@ -27,6 +29,7 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
+LIBS:sensors
 LIBS:device
 LIBS:Poulailler-cache
 EELAYER 25 0
@@ -186,7 +189,7 @@ F 3 "" H 1300 3500 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Battery SolarCells
+L Battery-RESCUE-Poulailler SolarCells
 U 1 1 5A236034
 P 1050 1700
 F 0 "SolarCells" V 900 1450 50  0000 L CNN
@@ -210,7 +213,7 @@ F 3 "" H 3000 2300 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L POT RV?
+L POT-RESCUE-Poulailler RV?
 U 1 1 5A243FD7
 P 2400 2400
 F 0 "RV?" V 2225 2400 50  0001 C CNN
@@ -365,7 +368,7 @@ F 3 "" H 10550 2710 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Battery 5V
+L Battery-RESCUE-Poulailler 5V
 U 1 1 5A249A56
 P 10150 1000
 F 0 "5V" V 10300 950 50  0000 L CNN
@@ -427,7 +430,7 @@ Text Notes 4250 2300 0    60   ~ 0
 1 & 5
 Text Notes 4300 1800 0    60   ~ 0
 No
-Text GLabel 9350 3350 1    60   Input ~ 0
+Text GLabel 9350 3350 3    60   Input ~ 0
 +3,3
 $Comp
 L R R?
@@ -465,7 +468,7 @@ F 3 "" H 3500 1800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED D?
+L LED-RESCUE-Poulailler D?
 U 1 1 5A47AA84
 P 3500 1450
 F 0 "D?" H 3500 1550 50  0001 C CNN
@@ -789,4 +792,49 @@ Wire Wire Line
 	10400 1250 10400 1000
 Wire Wire Line
 	10400 1000 10300 1000
+$Comp
+L R R?
+U 1 1 5A5E6B53
+P 9900 3050
+F 0 "R?" V 9980 3050 50  0001 C CNN
+F 1 "100k" V 9900 3050 50  0000 C CNN
+F 2 "" V 9830 3050 50  0001 C CNN
+F 3 "" H 9900 3050 50  0001 C CNN
+	1    9900 3050
+	1    0    0    -1  
+$EndComp
+$Comp
+L R_Variable R?
+U 1 1 5A5E6ED9
+P 9900 3350
+F 0 "R?" V 10000 3250 50  0001 L CNN
+F 1 "20k" V 9800 3300 50  0000 L CNN
+F 2 "" V 9830 3350 50  0001 C CNN
+F 3 "" H 9900 3350 50  0001 C CNN
+	1    9900 3350
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R?
+U 1 1 5A5E6FD1
+P 9750 3500
+F 0 "R?" V 9830 3500 50  0001 C CNN
+F 1 "5,1k" V 9750 3500 50  0000 C CNN
+F 2 "" V 9680 3500 50  0001 C CNN
+F 3 "" H 9750 3500 50  0001 C CNN
+	1    9750 3500
+	0    -1   -1   0   
+$EndComp
+Connection ~ 9600 3500
+Wire Wire Line
+	9750 1500 9750 2900
+Wire Wire Line
+	9750 2900 9900 2900
+Connection ~ 9750 1500
+Wire Wire Line
+	9900 3200 8200 3200
+Wire Wire Line
+	8200 3200 8200 2750
+Wire Wire Line
+	8200 2750 8000 2750
 $EndSCHEMATC
