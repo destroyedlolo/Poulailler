@@ -127,6 +127,7 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 	} else if(cmd == "TstAux"){	// Simulate Sunlight aquisition
 		auxiliaires.power(true);
 		delay( auxiliaires.getWaitTime() );
+		auxiliaires.water(true);	// Refresh GPIOs
 		auxiliaires.power(false);
 		auxiliaires.status(false);
 	} else if(cmd == "ESPInt"){
