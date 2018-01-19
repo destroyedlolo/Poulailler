@@ -124,6 +124,11 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 			auxiliaires.setWaitTime( arg.toInt() );
 		else
 			context.Output( ( String("Stabilisation Aux : ") + String(auxiliaires.getWaitTime()) ).c_str() );
+	} else if(cmd == "TstAux"){	// Simulate Sunlight aquisition
+		auxiliaires.power(true);
+		delay( auxiliaires.getWaitTime() );
+		auxiliaires.power(false);
+		auxiliaires.status();
 	} else if(cmd == "ESPInt"){
 		if( arg.length() )
 			myESP.changeInterval( arg.toInt() );
@@ -171,7 +176,7 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 			context.Output( ( String("Interval ESP : ") + String(myESP.getCaliber()) ).c_str() );
 	} else {
 		String msg("Commandes : Aux {on|off}, Net {M|D|MD|DM},\n"
-		"ESPInt [val], PerchInt [val], AuxInt [val], AuxStab [val],\n"
+		"ESPInt [val], PerchInt [val], AuxInt [val], AuxStab [val], TstAux,\n"
 		"PorteOuverte (po), PorteFermee (pf), PorteStop (ps), PorteTimeout (pt) {val}, PorteOk\n"
 		"calVcc, maxVcc [val]\n"
 		"pub [Dev|Perch], statut, 1wscan, reset, bye");
