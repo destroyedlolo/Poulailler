@@ -28,7 +28,7 @@ public :
 
 	void setCaliber( unsigned int v ){
 		if( !v || v>1024 )
-			v=1024;
+			v=1000;
 		this->data.caliber = v;
 		this->tokeep->save();
 	}
