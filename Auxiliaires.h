@@ -107,11 +107,11 @@ public:
 		return !gpio.getPIOB();
 	}
 
-	void status( void ){
+	void status( bool refresh=true ){
 #ifdef DEV_ONLY
 		String msg ="Auxillaries : ";
 		msg += this->isPowered()? "powered, " : "off, ";
-		msg += this->water(true) ? "enough water, " : "lack of water, ";
+		msg += this->water( refresh ) ? "enough water, " : "lack of water, ";
 		msg += this->SunLight(false) ? "Day" : "Night";
 
 		context.Output(msg);

@@ -128,7 +128,7 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 		auxiliaires.power(true);
 		delay( auxiliaires.getWaitTime() );
 		auxiliaires.power(false);
-		auxiliaires.status();
+		auxiliaires.status(false);
 	} else if(cmd == "ESPInt"){
 		if( arg.length() )
 			myESP.changeInterval( arg.toInt() );
