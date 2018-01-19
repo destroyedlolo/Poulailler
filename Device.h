@@ -21,7 +21,7 @@ public :
 	Device(Context &ctx) : Repeater( ctx, (INTERVAL_DEVICE-10) * 1e3, true ), context(ctx) {	// '-10' ensures a launch if the "sample" time is the same
 		tokeep = new Context::keepInRTC( ctx, (uint32_t *)&data, sizeof(data) );
 		if( !ctx.isValid() ){	// Default value
-			this->data.caliber = 1024;
+			this->data.caliber = 1000;
 			this->tokeep->save();
 		}
 	}
