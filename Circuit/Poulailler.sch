@@ -1,6 +1,4 @@
 EESchema Schematic File Version 2
-LIBS:Poulailler-rescue
-LIBS:maxim
 LIBS:power
 LIBS:transistors
 LIBS:conn
@@ -29,7 +27,6 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
-LIBS:sensors
 LIBS:device
 LIBS:Poulailler-cache
 EELAYER 25 0
@@ -819,7 +816,7 @@ L R R?
 U 1 1 5A5E6FD1
 P 9750 3500
 F 0 "R?" V 9830 3500 50  0001 C CNN
-F 1 "5,1k" V 9750 3500 50  0000 C CNN
+F 1 "6,8k" V 9750 3500 50  0000 C CNN
 F 2 "" V 9680 3500 50  0001 C CNN
 F 3 "" H 9750 3500 50  0001 C CNN
 	1    9750 3500
