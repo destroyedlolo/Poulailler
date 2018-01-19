@@ -17,6 +17,7 @@ class Auxiliaires : public Repeater {
 	Context &context;
 	DS2413 gpio;
 	unsigned long int next;
+	bool testmode;					// In test mode
 
 	struct {
 		unsigned long int wait4stab;	// Wait for the capacitor to load
@@ -27,11 +28,14 @@ public:
 	Auxiliaires( Context &ctx ) : 
 	Repeater( ctx, (INTERVAL_AUX-10) * 1e3, true ),
 	context( ctx ), 
-	gpio( context.getOWBus(), DSADDR ){
+	gpio( context.getOWBus(), DSADDR ),
+	testmode(false){
 		agarder = new Context::keepInRTC( ctx, (uint32_t *)&conf, sizeof(conf) );
 
-		if( !ctx.isValid() )	// Default value
+		if( !ctx.isValid() ){	// Default value
 			conf.wait4stab = DELAY_AUX;
+			this->agarder->save();
+		}
 	}
 
 	void setup( void ){
@@ -52,7 +56,7 @@ public:
 	void loop( void ){
 		if( !this->isPowered() )	// nothing was on way
 			this->Repeater::loop();
-		else if( millis() > this->next ){	// all auxiliaries are powerd
+		else if( (millis() > this->next) && !testmode ){	// all auxiliaries are powerd
 				/* Action to be done */
 			this->water(true);	// Refresh GPIOs
 			this->power(false);	// Save power
@@ -73,11 +77,14 @@ public:
 		this->power(true);
 	}
 
-	void power( bool v ){
+	void power( bool v, bool tst=false ){
 		context.Output( v ? "Auxillaries ON" : "Auxillaries OFF" );
 		digitalWrite(AUXPWR_GPIO, !v);	// Caution : power is active when GPIO is LOW
 		if(v)
 			this->next = millis() + conf.wait4stab;	// initialise wakeup timer
+
+		if(tst)
+			this->testmode = v;
 	}
 
 	bool isPowered( void ){

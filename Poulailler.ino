@@ -113,7 +113,7 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 		else
 			network.setMode( Network::NetworkMode::SAFEDM );
 	} else if(cmd == "Aux")
-		auxiliaires.power( arg == "on" );
+		auxiliaires.power( arg == "on", true );
 	else if(cmd == "AuxInt"){
 		if( arg.length() )
 			auxiliaires.changeInterval( arg.toInt() );
