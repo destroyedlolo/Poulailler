@@ -41,6 +41,7 @@ public:
 
 private:
 	bool changed;			// Publish the network as it changed
+	unsigned long MQTTFailure;	// Time of MQTT failure
 
 	struct {
 		unsigned int attempts;	// If in degraded mode, counter before recovery try
@@ -131,11 +132,12 @@ private:
 		Serial.println("Connecting to MQTT");
 #endif
 
-		while(!clientMQTT.connected()){
+		for( int i=0; i< 120; i++ ){
 			if(clientMQTT.connect(MQTT_CLIENT,false)){
 #ifdef SERIAL_ENABLED
 				Serial.println("connected");
 #endif
+				clientMQTT.subscribe(MQTT_Command.c_str(), 1);	// QoS 1 to ensure message delivery at wakeup
 				break;
 			} else {
 #ifdef SERIAL_ENABLED
@@ -145,8 +147,6 @@ private:
 				delay(1000);	// Test dans 1 seconde
 			}
 		}
-
-		clientMQTT.subscribe(MQTT_Command.c_str(), 1);	// QoS 1 to ensure message delivery at wakeup
 	}
 
 public:
@@ -161,7 +161,7 @@ public:
 #endif
 	}
 
-	Network( Context &ctx ) : Context::keepInRTC( ctx, (uint32_t *)&data, sizeof(data) ), changed(false){
+	Network( Context &ctx ) : Context::keepInRTC( ctx, (uint32_t *)&data, sizeof(data) ), changed(false), MQTTFailure(0) {
 		if( !ctx.isValid() ){	// Default value
 			this->data.mode = NetworkMode::SAFEDM;
 			this->data.current = this->getNominalNetwork();
@@ -250,6 +250,9 @@ public:
 
 	void publish( const char *topic, const char *msg ){
 		if(!clientMQTT.connected()){
+			if( millis() < this->MQTTFailure + MQTTRETRY * 1e3 )	// Broker connection failed
+				return;
+
 			Duration dmqtt;
 			this->MQTTConnect();
 			dmqtt.Finished();
@@ -268,5 +271,4 @@ public:
 			clientMQTT.loop();
 	}
 };
-
 #endif

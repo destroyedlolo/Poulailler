@@ -59,6 +59,6 @@ String MQTT_Command = MQTT_Topic + "Command";
 #define FAILUREDELAY	900		// Delay b/w 2 network attempt in case of failure (15 minutes)
 #define RETRYAFTERSWITCHING	12	// number of connections before trying the nominal network in case of degraded mode
 #define RETRYAFTERFAILURE	3	// number of connections before trying the nominal network in case of faillure
-
+#define MQTTRETRY	120			// Delay b/w MQTT retries
 
 #endif
