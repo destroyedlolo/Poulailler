@@ -127,26 +127,33 @@ private:
 		return false;
 	}
 
-	void MQTTConnect( void ){
+	bool MQTTConnect( void ){
 #ifdef SERIAL_ENABLED
 		Serial.println("Connecting to MQTT");
 #endif
 
-		for( int i=0; i< 120; i++ ){
+		for( unsigned long t=millis(); millis()< t + MQTTRETRY * 1e3; ){
 			if(clientMQTT.connect(MQTT_CLIENT,false)){
 #ifdef SERIAL_ENABLED
 				Serial.println("connected");
 #endif
 				clientMQTT.subscribe(MQTT_Command.c_str(), 1);	// QoS 1 to ensure message delivery at wakeup
-				break;
+				return true;
 			} else {
 #ifdef SERIAL_ENABLED
-				Serial.print("Failure, rc:");
+				Serial.print(millis() - t);
+				Serial.print(" : Failure, rc:");
 				Serial.println(clientMQTT.state());
 #endif
 				delay(1000);	// Test dans 1 seconde
 			}
 		}
+
+		this->MQTTFailure = millis();
+#ifdef SERIAL_ENABLED
+		Serial.println("MQTT : Failed to connect");
+#endif
+		return false;
 	}
 
 public:
@@ -250,11 +257,12 @@ public:
 
 	void publish( const char *topic, const char *msg ){
 		if(!clientMQTT.connected()){
-			if( millis() < this->MQTTFailure + MQTTRETRY * 1e3 )	// Broker connection failed
+			if( this->MQTTFailure && millis() < this->MQTTFailure + MQTTRETRY * 1e3 )	// Broker connection failed
 				return;
 
 			Duration dmqtt;
-			this->MQTTConnect();
+			if(!this->MQTTConnect())	// Failing to reconnect
+				return;
 			dmqtt.Finished();
 
 #ifdef SERIAL_ENABLED
