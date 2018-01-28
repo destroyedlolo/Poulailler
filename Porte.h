@@ -16,12 +16,22 @@
 class Porte : public Context::keepInRTC {
 public:
 	enum Command {	// What is requested to the gate
-		NONE,	// Stay at it is
+		NONE = 0,	// Stay at it is (or Unknown for position)
 		ERROR,	// Door can't move
 		STOP,	// Stop the door
 		OPEN,
 		CLOSE
 	};
+
+	const char *toString( enum Command c ){
+		switch(c){
+		default : return "Aucun ou inconnu";
+		case ERROR : return "En erreur";
+		case STOP : return "Stoppe";
+		case OPEN : return "Ouvert";
+		case CLOSE : return "Ferme";
+		}
+	}
 
 private:
 	enum GPIO {
@@ -32,6 +42,7 @@ private:
 
 	struct { 
 		enum Command command;
+		enum Command position;
 		unsigned long timeout;
 		unsigned long startmvt;	// Start of the current movement
 	} data;	// data to be kept
@@ -49,6 +60,7 @@ public:
 	Porte( Context &ctx ) : Context::keepInRTC( ctx, (uint32_t *)&data, sizeof(data) ) {
 		if( !ctx.isValid() ){	// Default value
 			this->data.command = Command::STOP;
+			this->data.position = Command::NONE;
 			this->data.timeout = TIMEOUT_DOOR;
 			this->save();
 		}
@@ -78,16 +90,19 @@ public:
 			context.Output("Ouverture porte");
 			digitalWrite( GPIO::UP, 1);
 			this->data.startmvt = context.getTime();
+			this->data.position = Command::NONE;	// Moving
 			this->save();
 			return true;
 		case Command::CLOSE :
 			context.Output("Fermeture porte");
 			digitalWrite( GPIO::DOWN, 1);
 			this->data.startmvt = context.getTime();
+			this->data.position = Command::NONE;	// Moving
 			this->save();
 			return true;
 		case Command::ERROR :
 			context.Output("Timeout sur le mouvement de la porte : PROBLEME !!!");
+			this->data.position = Command::ERROR;
 		default:
 			return false;	// the door is not in movement
 		}
@@ -95,6 +110,7 @@ public:
 
 	void clearErrorCondition( void ){
 		this->data.command = Command::NONE;	// Reset error condition
+		this->data.position = Command::NONE;	// Moving
 		this->action( Command::STOP );		// Force GPIO to a known condition
 	}
 
@@ -114,9 +130,16 @@ public:
 	 * 	only if the motor is in movement as linked to UP and DOWN GPIOs
 	 * <-  
 	 */
-		if(digitalRead( GPIO::END ))
+		if(digitalRead( GPIO::END )){
+			switch( this->data.command ){	// otherwise, it should already been set
+				case Command::OPEN :
+				case Command::CLOSE :
+					this->data.position = this->data.command;
+				default :	// Only to avoid warnings
+					;
+			}
 			return this->action( Command::STOP );
-		else if( this->isMoving() ){
+		} else if( this->isMoving() ){
 			if( context.getTime() > ( this->data.startmvt + this->data.timeout ) )	// Movment too long
 				return this->action( Command::ERROR );
 			else
@@ -131,6 +154,18 @@ public:
 	void setTimeout( signed long v ){
 		this->data.timeout = v;
 		this->save();
+	}
+
+	void status( void ){
+#ifdef DEV_ONLY
+		String msg = "Porte\n\tCommande :";
+		msg += this->toString( this->data.command );
+		msg += "\n\tPosition :";
+		msg += this->toString( this->data.position );
+		msg += "\n\tTimout :";
+		msg += this->data.timeout;
+		context.Output(msg);
+#endif
 	}
 };
 #endif
