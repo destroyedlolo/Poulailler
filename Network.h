@@ -31,11 +31,11 @@ public:
 
 	const char *toString( enum NetworkMode n ){
 		switch(n){
-		default : return "Failure";
+		default : return "Echec";
 		case MAISON : return "Maison";
 		case DOMOTIQUE : return "Domotique";
-		case SAFEDM : return "Safe D->M";
-		case SAFEMD : return "Safe M->D";
+		case SAFEDM : return "Securise D->M";
+		case SAFEMD : return "Securise M->D";
 		};
 	}
 
@@ -129,20 +129,20 @@ private:
 
 	bool MQTTConnect( void ){
 #ifdef SERIAL_ENABLED
-		Serial.println("Connecting to MQTT");
+		Serial.println("Connexion MQTT");
 #endif
 
 		for( unsigned long t=millis(); millis()< t + MQTTRETRY * 1e3; ){
 			if(clientMQTT.connect(MQTT_CLIENT,false)){
 #ifdef SERIAL_ENABLED
-				Serial.println("connected");
+				Serial.println("connecte");
 #endif
 				clientMQTT.subscribe(MQTT_Command.c_str(), 1);	// QoS 1 to ensure message delivery at wakeup
 				return true;
 			} else {
 #ifdef SERIAL_ENABLED
 				Serial.print(millis() - t);
-				Serial.print(" : Failure, rc:");
+				Serial.print(" : Echec, rc:");
 				Serial.println(clientMQTT.state());
 #endif
 				delay(1000);	// Test dans 1 seconde
@@ -151,7 +151,7 @@ private:
 
 		this->MQTTFailure = millis();
 #ifdef SERIAL_ENABLED
-		Serial.println("MQTT : Failed to connect");
+		Serial.println("MQTT : Echec pour se connecter");
 #endif
 		return false;
 	}
@@ -159,11 +159,11 @@ private:
 public:
 	void status( void ){
 #ifdef DEV_ONLY
-		String msg = "Network\n\tmode :";
+		String msg = "Reseau\n\tmode :";
 		msg += this->toString(this->data.mode);
-		msg += "\n\tcurrent :";
+		msg += "\n\tcourant :";
 		msg += this->toString(this->data.current);
-		msg += this->changed ? " (changed)" : " (kept)";
+		msg += this->changed ? " (change)" : " (conserve)";
 		context.Output(msg);
 #endif
 	}
@@ -241,7 +241,7 @@ public:
 		dwifi.Finished();
 
 #ifdef SERIAL_ENABLED
-		Serial.print("WiFi connection duration :");
+		Serial.print("Duree connexion WiFi :");
 		Serial.println( *dwifi );
 #endif
 		this->publish( (MQTT_Topic + "Wifi").c_str(), String( *dwifi ).c_str() );
@@ -266,7 +266,7 @@ public:
 			dmqtt.Finished();
 
 #ifdef SERIAL_ENABLED
-			Serial.print("MQTT connection duration :");
+			Serial.print("Duree connexion MQTT :");
 			Serial.println( *dmqtt );
 #endif
 			clientMQTT.publish( (MQTT_Topic + "MQTT/Connection").c_str(), String( *dmqtt ).c_str() );
