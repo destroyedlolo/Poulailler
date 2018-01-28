@@ -74,7 +74,7 @@ private:
 		 ***/
 	bool connectMaison( bool persistant = true ){
 #ifdef SERIAL_ENABLED
-		Serial.println("Connecting to home network");
+		Serial.println("Connexion au reseau la maison");
 #endif
 
 		if( !persistant )
@@ -103,7 +103,7 @@ private:
 
 	bool connectDomotique( bool persistant = true ){
 #ifdef SERIAL_ENABLED
-		Serial.println("Connecting to Domotique network");
+		Serial.println("Connexion au reseau Domotique");
 #endif
 
 		if( !persistant )
@@ -121,7 +121,7 @@ private:
 			}
 			delay(500);
 #ifdef SERIAL_ENABLED
-			Serial.print("-");
+			Serial.print("=");
 #endif
 		}
 		return false;
