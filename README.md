@@ -32,12 +32,12 @@ Automatisation de mon poulailler.
 * **Poulailler/Perchoir/Temperature** : as the name said
 * **Poulailler/Perchoir/Humidite** : as the name said
 
-* **Poulailler/Water/level** : Enough / Empty
+* **Poulailler/Eau/Niveau** : Suffisant / Vide
 
-* **Poulailler/Sunlight** : Day / Night
+* **Poulailler/Luminosite** : Jour / Nuit
 
 * **Poulailler/Alim** : Power supply
-* **Poulailler/Memory** : available memory
+* **Poulailler/Memoire** : available memory
 * **Poulailler/Network** : Network we are connected to
 * **Poulailler/Wifi** : time to connect to the WiFi network
 * **Poulailler/MQTT/Connection** : reconnect duration

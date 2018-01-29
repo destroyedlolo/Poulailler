@@ -63,12 +63,12 @@ public:
 
 				// Publish from saved data
 			context.publish( 
-				(MQTT_Topic+"Water/level").c_str(), 
-				this->water() ? "Enough" : "Empty"
+				(MQTT_Topic+"Eau/Niveau").c_str(), 
+				this->water() ? "Suffisant" : "Vide"
 			);
 			context.publish(
-				(MQTT_Topic+"Sunlight").c_str(),
-				this->SunLight() ? "Day" : "Night"
+				(MQTT_Topic+"Luminosite").c_str(),
+				this->SunLight() ? "Jour" : "Nuit"
 			);
 		}
 	}
@@ -109,10 +109,11 @@ public:
 
 	void status( bool refresh=true ){
 #ifdef DEV_ONLY
-		String msg ="Auxillaries : ";
-		msg += this->isPowered()? "powered, " : "off, ";
-		msg += this->water( refresh ) ? "enough water, " : "lack of water, ";
-		msg += this->SunLight(false) ? "Day" : "Night";
+		String msg ="Auxillaires : ";
+		msg += this->isPowered()? "alimenté, " : "coupé, ";
+		msg += this->water( refresh ) ? "assez " : "manque";
+		msg += " d'eau, ";
+		msg += this->SunLight(false) ? "Jour" : "Nuit";
 
 		context.Output(msg);
 #endif

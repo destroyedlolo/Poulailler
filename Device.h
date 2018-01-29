@@ -38,7 +38,7 @@ public :
 	void action( void ){
 		unsigned int v = analogRead(A0), t = v * 5000 / this->getCaliber();
 #ifdef SERIAL_ENABLED
-		Serial.print("Power : ");
+		Serial.print("Alimentation: ");
 		Serial.print( v );
 		Serial.print(" -> ");
 		Serial.println( t );
@@ -46,10 +46,10 @@ public :
 		context.publish( (MQTT_Topic + "Alim").c_str(), String( t ).c_str() );
 
 #ifdef SERIAL_ENABLED
-		Serial.print("Memory : ");
+		Serial.print("Mémoire : ");
 		Serial.println(ESP.getFreeHeap());
 #endif
-		context.publish( (MQTT_Topic + "Memory").c_str(), String( ESP.getFreeHeap() ).c_str() );
+		context.publish( (MQTT_Topic + "Memoire").c_str(), String( ESP.getFreeHeap() ).c_str() );
 	}
 
 };
