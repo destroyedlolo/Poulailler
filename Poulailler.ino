@@ -75,10 +75,10 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 		this->finished();
 		return;
 	} else if(cmd == "1wscan"){
-		String msg = "Number of probes on the bus : ";
+		String msg = "Sondes sur le bus : ";
 		msg += context.getOWBus().getDeviceCount();
 
-		msg += "\nIndividual address :";
+		msg += "\nAdresses individuelles :";
 		OWBus::Address addr;
 		context.getOWBus().search_reset();
 		while( context.getOWBus().search_next( addr ) ){
@@ -86,11 +86,11 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 			msg += addr.toString().c_str();
 			msg += " : ";
 			if(!addr.isValid( context.getOWBus() ))
-				msg += "Invalid address\n";
+				msg += "Adresse Invalide\n";
 			else {
 				OWDevice probe( context.getOWBus(), addr );
 				msg += probe.getFamily();
-				msg += probe.isParasitePowered() ? " (Parasite)" : " (External)";
+				msg += probe.isParasitePowered() ? " (Parasite)" : " (Externe)";
 			}
 		}
 		context.Output(msg);
@@ -118,7 +118,7 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 		if( arg.length() )
 			auxiliaires.changeInterval( arg.toInt() );
 		else
-			context.Output( ( String("Interval Aux : ") + String(auxiliaires.getInterval()) ).c_str() );
+			context.Output( ( String("Intervalle Aux : ") + String(auxiliaires.getInterval()) ).c_str() );
 	} else if(cmd == "AuxStab"){
 		if( arg.length() )
 			auxiliaires.setWaitTime( arg.toInt() );
@@ -134,12 +134,12 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 		if( arg.length() )
 			myESP.changeInterval( arg.toInt() );
 		else
-			context.Output( ( String("Interval ESP : ") + String(myESP.getInterval()) ).c_str() );
+			context.Output( ( String("Intervalle ESP : ") + String(myESP.getInterval()) ).c_str() );
 	} else if(cmd == "PerchInt"){
 		if( arg.length() )
 			perchoir.changeInterval( arg.toInt() );
 		else
-			context.Output( ( String("Interval Perchoir : ") + String(perchoir.getInterval()) ).c_str() );
+			context.Output( ( String("Intervalle Perchoir : ") + String(perchoir.getInterval()) ).c_str() );
 	} else if(cmd == "PorteOuverte" || cmd == "po")
 		porte.action( Porte::Command::OPEN );
 	else if(cmd == "PorteFermee" || cmd == "pf")
@@ -164,7 +164,7 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 #	ifdef SERIAL_ENABLED
 		while(!Serial.available()){
 			unsigned int v = analogRead(A0), t = v * 5000 / myESP.getCaliber();
-			Serial.print("Power : ");
+			Serial.print("Alimentation : ");
 			Serial.print( v );
 			Serial.print(" -> ");
 			Serial.println( t );
@@ -175,7 +175,7 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 		if( arg.length() )
 			myESP.setCaliber( arg.toInt() );
 		else
-			context.Output( ( String("Interval ESP : ") + String(myESP.getCaliber()) ).c_str() );
+			context.Output( ( String("Intervalle ESP : ") + String(myESP.getCaliber()) ).c_str() );
 	} else {
 		String msg("Commandes : Aux {on|off}, Net {M|D|MD|DM},\n"
 		"ESPInt [val], PerchInt [val], AuxInt [val], AuxStab [val], TstAux,\n"
@@ -221,12 +221,12 @@ void setup(){
 	auxiliaires.setup();
 
 #ifdef SERIAL_ENABLED
-	Serial.println("\nInitial setup :\n----------");
+	Serial.println("\nValeurs initiales :\n----------");
 	context.status();
 	network.status();
 
 #	if AUXPWR_GPIO != 0 
-	Serial.println(	"****** DEV MOD *******" );
+	Serial.println(	"****** Mode DEV *******" );
 #	endif
 #endif
 
@@ -260,7 +260,7 @@ void loop(){
 	case Context::Steps::STARTUP_STARTUP :
 		auxiliaires.power( true );
 		context.setStatus( Context::Steps::STARTUP_AUXPWR );
-		context.Output("Step : STARTUP_AUXPWR");
+		context.Output("Etape : STARTUP_AUXPWR");
 		break;
 	case Context::Steps::STARTUP_AUXPWR :
 		if( auxiliaires.isStabilised() ){ // Test if it's day or night
@@ -272,7 +272,7 @@ void loop(){
 				porte.action( Porte::Command::CLOSE );
 			}
 			context.setStatus( Context::Steps::STARTUP_WAIT4DOOR );
-			context.Output("Step : STARTUP_WAIT4DOOR");
+			context.Output("Etape : STARTUP_WAIT4DOOR");
 		}
 		break;
 	case Context::Steps::STARTUP_WAIT4DOOR :
