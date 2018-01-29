@@ -245,8 +245,9 @@ public:
 		Serial.println( *dwifi );
 #endif
 		this->publish( (MQTT_Topic + "Wifi").c_str(), String( *dwifi ).c_str() );
+		this->publish( (MQTT_Topic + "Reseau").c_str(), this->toString(this->data.current) );
 		if( this->changed )
-			this->publish( (MQTT_Topic + "Network").c_str(), this->toString(this->data.current) );
+			this->publish( (MQTT_Topic + "Reseau/Change").c_str(), this->toString(this->data.current) );
 		return true;
 	}
 
@@ -269,7 +270,7 @@ public:
 			Serial.print("Duree connexion MQTT :");
 			Serial.println( *dmqtt );
 #endif
-			clientMQTT.publish( (MQTT_Topic + "MQTT/Connection").c_str(), String( *dmqtt ).c_str() );
+			clientMQTT.publish( (MQTT_Topic + "MQTT").c_str(), String( *dmqtt ).c_str() );
 		}
 		clientMQTT.publish( topic, msg );
 	}

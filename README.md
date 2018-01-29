@@ -38,9 +38,10 @@ Automatisation de mon poulailler.
 
 * **Poulailler/Alim** : Power supply
 * **Poulailler/Memoire** : available memory
-* **Poulailler/Network** : Network we are connected to
+* **Poulailler/Reseau** : Network we are connected to
+* **Poulailler/Reseau/Change** : when we switch to another network
 * **Poulailler/Wifi** : time to connect to the WiFi network
-* **Poulailler/MQTT/Connection** : reconnect duration
+* **Poulailler/MQTT** : reconnect duration
 
 * **Poulailler/Error** : Error messages
 * **Poulailler/Message** : various messages, output, ...
