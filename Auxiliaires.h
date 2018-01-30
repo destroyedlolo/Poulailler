@@ -61,14 +61,15 @@ public:
 			this->water(true);	// Refresh GPIOs
 			this->power(false);	// Save power
 
+
 				// Publish from saved data
 			context.publish( 
 				(MQTT_Topic+"Eau/Niveau").c_str(), 
-				this->water() ? "Suffisant" : "Vide"
+				this->water(false) ? "Suffisant" : "Vide"
 			);
 			context.publish(
 				(MQTT_Topic+"Luminosite").c_str(),
-				this->SunLight() ? "Jour" : "Nuit"
+				this->SunLight(false) ? "Jour" : "Nuit"
 			);
 		}
 	}
