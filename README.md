@@ -51,6 +51,7 @@ Automatisation de mon poulailler.
 
 * MX1508 H-Bridge
 * 3a77553800000091 : DS2413 - Day light probe
+* 28ff8fbf711703c3 : DS18B20 - Watter temperature
 
 ## Test Bat
 
