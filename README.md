@@ -88,3 +88,7 @@ WIP : to be ignored.
 | Power | DHT  22 | Water |  1-wire | Closing Door | Opening Door |
 | ----- | ------- | ----- | ------- | ------------ | ------------ |
 | +5 G  | G Dt +3 | Dt G  | G Dt +3 | H  Com  End  |  H Com End   |
+                                      V   O    M      J  B   O
+									  i   r    a      a  l   r
+									  o   a    r      u  e
+									  l   n    r      n  u
