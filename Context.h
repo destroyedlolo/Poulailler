@@ -161,8 +161,10 @@ public:
 		if (isinf(number)) return "inf";
 
 		bool negative = false;
-		if(number < 0.0)
+		if(number < 0.0){
+			number = - number;
 			negative = true;
+		}
 
 			// Round correctly so that print(1.999, 2) prints as "2.00"
 		float rounding = 0.5;
