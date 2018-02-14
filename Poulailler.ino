@@ -160,6 +160,7 @@ void CommandLine::exec( String &cmd ){	// Implement command line
 		network.status();
 		auxiliaires.status();
 		porte.status();
+		perchoir.status();
 	} else if(cmd == "calVcc"){
 #	ifdef SERIAL_ENABLED
 		while(!Serial.available()){

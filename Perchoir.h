@@ -70,5 +70,17 @@ public :
 		Serial.println(this->humidite);
 #		endif
 	}
+
+	void status( void ){
+#ifdef DEV_ONLY
+		String msg = "Perchoir\n\tProchain échantillonage : ";
+		msg += this->remain();
+		msg += "ms\n\t";
+		msg += this->temperature;
+		msg += "° ";
+		msg += this->humidite;
+		context.Output(msg);
+#endif
+	}
 };
 #endif
