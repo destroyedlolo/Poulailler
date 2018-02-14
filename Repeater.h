@@ -31,7 +31,10 @@ public:
 	}
 
 	unsigned long int next( void ){
-		return this->tokeep.start + this->tokeep.interval;
+		if(this->tokeep.start)
+			return this->tokeep.start + this->tokeep.interval;
+		else
+			return 0;
 	}
 
 	void changeInterval( unsigned long int i ){
