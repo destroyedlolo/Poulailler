@@ -320,7 +320,7 @@ void loop(){
 		if( in_interactive ){
 			howlong = _min( howlong, DELAY_LIGHT );
 			delay(howlong);
-		} else {
+		} else if( howlong ){
 #		ifdef SERIAL_ENABLED
 			Serial.print("Dodo ");
 			Serial.print( howlong );
@@ -328,6 +328,10 @@ void loop(){
 #		endif
 			context.keepTimeBeforeSleep( howlong );	// In mS
 			ESP.deepSleep(howlong * 1e3);			// In uS
+		} else {
+#		ifdef SERIAL_ENABLED
+			Serial.println("Dormir c'est un peu mourrir !");
+#		endif
 		}
 	}
 }
