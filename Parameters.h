@@ -33,6 +33,8 @@ IPAddress adr_dns(192, 168, 0, 3);
 
 	/* GPIOs */
 #define AUXPWR_GPIO	0 /* Power auxiliaries, on prod 0 */
+#define ONE_WIRE_BUS 2 // Where OW bus is connected to
+#define pinDHT 5	// Where DHT is connected to
 
 
 	/* MQTT */
