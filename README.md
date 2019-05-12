@@ -8,7 +8,7 @@ Automatisation de mon poulailler.
 ## Goals
 
 Due to several issues with the chicken coop itself I had to manage, I missed my deadline and had to buy a commercial door automation.
-Consequently, despite it was close to be finished, I gave up with v1 which is now stalling and this v2(s goals are simpler :
+Consequently, despite it was close to be finished, I gave up with v1 which is now stalling and this v2's goals are simpler :
 
 * temperature and humidity monitoring
 * check the door is open at sunset and open at sunrise
@@ -73,3 +73,10 @@ I = 5 / 125.1K = ~ 40uA
 									  i   r    a      a  l   r
 									  o   a    r      u  e
 									  l   n    r      n  u
+
+## Dependencies
+
+* [SimpleDHT](https://github.com/winlinvip/SimpleDHT) - **DHT** connectivity
+* [PubSubClient](https://github.com/knolleary/pubsubclient) - **MQTT** connectivity
+* [KeepInRTC](https://github.com/destroyedlolo/KeepInRTC) - ESP8266's RTC memory management
+* [LFUtilities](https://github.com/destroyedlolo/LFUtilities) - Various helpers
