@@ -26,7 +26,6 @@ extern "C" {
 
 #include <LFUtilities.h>	// Fake but needed to load LFUtilities
 #include <LFUtilities/Duration.h>	// Duration measurement 
-#include <LFUtilities/SafeMQTTClient.h>	// Network connection
 
 	/****
 	* Configuration management
@@ -41,10 +40,12 @@ Context ctx(kir);
 TemporalConsign delaySampleNest(kir);	// Delay b/w 2 nest sample.
 
 	/***
-	* Let's go
+	* Networks
 	****/
+#include "NetMQTT.h"
+
 WiFiClient clientWiFi;
-SafeMQTTClient sMQTTc(
+NetMQTT nMQTT(
 		clientWiFi,
 #ifdef DEV
 		WIFI_SSID, WIFI_PASSWORD,	// Connect to my own home network during development phase
@@ -55,6 +56,73 @@ SafeMQTTClient sMQTTc(
 		MQTT_CLIENT,	// Messages' root
 		false	// Doesn't clean waiting messages
 );
+
+const struct _command {
+	const char *nom;
+	const char *desc;
+	bool (*func)( const String & );	// true : the reset the timer
+} commands[] = {
+/*
+	{ "status", "Configuration courante", func_status },
+	{ "delai", "Délai entre chaque échantillons (secondes)", func_delai },
+	{ "attente", "Attend <n> secondes l'arrivée de nouvelles commandes", func_att },
+	{ "dodo", "Sort du mode interactif et place l'ESP en sommeil", func_dodo },
+	{ "reste", "Reste encore <n> secondes en mode interactif", func_reste },
+	{ "debug", "Active (1) ou non (0) les messages de debug", func_debug },
+	{ "OTA", "Active l'OTA jusqu'au prochain reboot", func_OTA },
+*/
+	{ NULL, NULL, NULL }
+};
+
+void handleMQTT(char* topic, byte* payload, unsigned int length){
+	String cmd;
+	for(unsigned int i=0;i<length;i++)
+		cmd += (char)payload[i];
+
+#	ifdef SERIAL_ENABLED
+	Serial.print( "Message [" );
+	Serial.print( topic );
+	Serial.print( "] : '" );
+	Serial.print( cmd );
+	Serial.println( "'" );
+#	endif
+
+	/* Split the command and its argument */
+	const int idx = cmd.indexOf(' ');
+	String arg;
+	if(idx != -1){
+		arg = cmd.substring(idx + 1);
+		cmd = cmd.substring(0, idx);
+	}
+
+	if(cmd == "?"){	// return the list of known commands
+		String rep;
+		if( arg.length() ) { // Looking for a specific command
+			rep = arg + " : ";
+
+			for( const struct _command *c = commands; c->nom; c++ ){
+				if( arg == c->nom && c->desc ){
+					rep += c->desc;
+					break;	// Found it, returning
+				}
+			}
+		} else {
+			rep = "Known commands :";
+
+			for( const struct _command *cmd = commands; cmd->nom; cmd++ ){
+				rep += ' ';
+				rep += cmd->nom;
+			}
+		}
+
+		nMQTT.logMsg( rep );
+	} else {	// Launch a command
+	}
+}
+
+	/***
+	* Let's go
+	****/
 
 void setup(){
 #ifdef SERIAL_ENABLED
@@ -72,13 +140,15 @@ void setup(){
 #endif
 	}
 
-	if( !sMQTTc.connectWiFi() ){
+	if( !nMQTT.connectWiFi() ){	// Will connect to MQTT as well
 #ifdef SERIAL_ENABLED
 		Serial.println("Unable to connect to the network ... will be back !");
 #endif
-		ctx.deepSleep( delaySampleNest.getConsign() );
+		ctx.deepSleep( delaySampleNest.getConsign() );	// sleep till next try
 	}
+	nMQTT.begin( MQTT_Command.c_str(), handleMQTT );
 }
 
 void loop(){
+	nMQTT.loop();
 }
