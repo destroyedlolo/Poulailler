@@ -14,6 +14,7 @@ class Context : public KeepInRTC::KeepMe {
 	struct {	// Data to be kept b/w run, saved in the RTC
 		unsigned long wakeuptime;	// last time we go to sleep (in seconds : will round in 136 years ;) )
 		bool verbose;				// Send informational messages
+		bool debug;					// Debug mode
 	} data;
 
 public:
@@ -26,6 +27,7 @@ public:
 		if( !kir.isValid() ){
 			this->data.wakeuptime = 0;
 			this->data.verbose = DEF_VERBOSITY;
+			this->data.debug = false;
 			this->save();
 			return true;
 		}
@@ -49,6 +51,16 @@ public:
 
 	bool getVerbose( void ){
 		return this->data.verbose;
+	}
+
+		/* Enable debugging message */
+	void setDebug(bool v){
+		this->data.debug = v;
+		this->save();
+	}
+
+	bool getDebug( void ){
+		return this->data.debug;
 	}
 };
 

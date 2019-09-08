@@ -24,6 +24,7 @@
 	 */
 #	define LED(x)	{ digitalWrite(LED_BUILTIN, x); }
 #	define DEF_NESTSLEEP 300	// Default sleep b/w nest sample (in seconds)
+#	define DEF_WAKED	240			// Default waked time in interactive mode (seconds)
 #	define DEF_VERBOSITY false	// low level of information send (by default, no to save some energies)
 
 #else
@@ -40,7 +41,8 @@
 #	define LED(x)	{ }
 #	define SERIAL_ENABLED
 
-#	define DEF_NESTSLEEP 30		// Sleep b/w nest sample (short as we're debugging)
+#	define DEF_NESTSLEEP 90		// Sleep b/w nest sample (short as we're debugging)
+#	define DEF_WAKED	240
 #	define DEF_VERBOSITY true	// Hight level of information send
 #endif
 

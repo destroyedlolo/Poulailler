@@ -37,7 +37,8 @@ KeepInRTC kir;	// RTC memory management
 Context ctx(kir);
 
 #include <LFUtilities/TemporalConsign.h>
-TemporalConsign delaySampleNest(kir);	// Delay b/w 2 nest sample.
+TemporalConsign delaySampleNest(kir);		// Delay b/w 2 nest sample.
+TemporalConsign stayWakedInteractive(kir);	// How long to stay waked in interactive mode
 
 	/***
 	* Networks
@@ -57,13 +58,45 @@ NetMQTT nMQTT(
 		false	// Doesn't clean waiting messages
 );
 
+	/***
+	* Handle MQTT
+	***/
+bool func_status( const String & ){
+	String msg = "Délai acquisition : ";
+	msg += delaySampleNest.getConsign();
+	msg += "\nEveil suite à commande : ";
+	msg += stayWakedInteractive.getConsign();
+	msg += ctx.getDebug() ? "\nMessages de Debug" : "\nPas de message de Debug";
+#ifdef DEV
+	msg += "\nFlash : ";
+	msg += ESP.getFlashChipSize();
+	msg += " (real : ";
+	msg += ESP.getFlashChipRealSize();
+	msg += ")";
+#endif
+	msg += "\nSketch : ";
+	msg += 	ESP.getSketchSize();
+	msg += ", Libre : ";
+	msg += ESP.getFreeSketchSpace();
+	msg += "\nHeap :";
+	msg += ESP.getFreeHeap();
+	msg += "\nAdresse IP :";
+	msg += WiFi.localIP().toString();
+
+/*
+	msg += OTA ? "\nOTA en attente": "\nOTA désactivé";
+*/
+	nMQTT.logMsg( msg );
+	return true;
+}
+
 const struct _command {
 	const char *nom;
 	const char *desc;
-	bool (*func)( const String & );	// true : the reset the timer
+	bool (*func)( const String & );	// true : stay awake, reset the timer
 } commands[] = {
-/*
 	{ "status", "Configuration courante", func_status },
+/*
 	{ "delai", "Délai entre chaque échantillons (secondes)", func_delai },
 	{ "attente", "Attend <n> secondes l'arrivée de nouvelles commandes", func_att },
 	{ "dodo", "Sort du mode interactif et place l'ESP en sommeil", func_dodo },
@@ -95,6 +128,7 @@ void handleMQTT(char* topic, byte* payload, unsigned int length){
 		cmd = cmd.substring(0, idx);
 	}
 
+	bool keepinteractive = true;	// We stay in interactive mode
 	if(cmd == "?"){	// return the list of known commands
 		String rep;
 		if( arg.length() ) { // Looking for a specific command
@@ -109,14 +143,26 @@ void handleMQTT(char* topic, byte* payload, unsigned int length){
 		} else {
 			rep = "Known commands :";
 
-			for( const struct _command *cmd = commands; cmd->nom; cmd++ ){
+			for( const struct _command *c = commands; c->nom; c++ ){
 				rep += ' ';
-				rep += cmd->nom;
+				rep += c->nom;
 			}
 		}
 
 		nMQTT.logMsg( rep );
 	} else {	// Launch a command
+		for( const struct _command *c = commands; c->nom; c++ ){
+			if( cmd == c->nom && c->func ){
+				keepinteractive = c->func( arg );
+				break;
+			}
+		}
+	}
+
+	if(keepinteractive){ // Reset the waked timer
+		stayWakedInteractive.setNext( millis() + stayWakedInteractive.getConsign() * 1e3 );
+	} else { // We have to go to sleep
+		stayWakedInteractive.setNext(0);
 	}
 }
 
@@ -134,7 +180,7 @@ void setup(){
 	pinMode(LED_BUILTIN, OUTPUT);
 #endif
 
-	if( ctx.begin() | delaySampleNest.begin(DEF_NESTSLEEP) /*| ctx.begin() */){	// single non logical or, otherwise other begin() will never be called
+	if( ctx.begin() | delaySampleNest.begin(DEF_NESTSLEEP) | stayWakedInteractive.begin(DEF_WAKED) ){	// single non logical or, otherwise other begin() will never be called
 #ifdef SERIAL_ENABLED
 		Serial.println("Default value");
 #endif
@@ -151,4 +197,21 @@ void setup(){
 
 void loop(){
 	nMQTT.loop();
+
+	if( stayWakedInteractive.getNext() < millis() ){	// No activities for too long
+#ifdef SERIAL_ENABLED
+			Serial.println( "Dodo ..." );
+#endif
+		long next = delaySampleNest.getNext() - millis();	// Time of the next sample
+		if(next > 0){
+#ifdef SERIAL_ENABLED
+			Serial.print("Sleep for ");
+			Serial.print(next);
+			Serial.println("ms ...");
+#endif
+//			ESP.deepSleep( next * 1e3 ); // because deepsleep is in uS
+			delay(10e3);	// Fake for testing purgpose
+		} else
+			delay(5e3);	// Wait 5s before next mqtt checking
+	}
 }
