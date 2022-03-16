@@ -200,7 +200,7 @@ void loop(){
 
 	if( stayWakedInteractive.getNext() < millis() ){	// No activities for too long
 #ifdef SERIAL_ENABLED
-			Serial.println( "Dodo ..." );
+		Serial.println( "Dodo ..." );
 #endif
 		long next = delaySampleNest.getNext() - millis();	// Time of the next sample
 		if(next > 0){
