@@ -20,13 +20,14 @@ Consequently, despite it was close to be finished, I gave up with v1 which is no
 The material is recycled from v1: some parts of the material could have been simplified and some GPIOs are currently unused.
 
 * **ADC** : power supply monitoring (*internal*)
-* **GPIO0** : enable aux power (*low*)
+* **GPIO0** : enable aux power (*out / low*)
 * **GPIO2** : 1-wire
 * **GPIO4** : Water warming (*unused*)
+* **GPIO15** : *unused* ~~Door open (*high* depend on GPIO13)~~
+* **GPIO013** : door is open (*In / internal pullup / low*)
+* **GPIO012** : door is closed (*In / internal pullup / low*)
+* **GPIO014** : roof is closed (*In / internal pullup / low*)
 * **GPIO5** : DHT22
-* **GPIO15** : Door open (*high* depend on GPIO13)
-* **GPIO013** : Must be *high* to measure the door is open.
-* **GPIO012** : (*unused* - connected to the H bridge)
 
 ## DS2413 PIOs
 
@@ -53,11 +54,13 @@ The material is recycled from v1: some parts of the material could have been sim
 * **Poulailler/Message** : various messages, output, ...
 * **Poulailler/Command** : MQTT commands topic ...
 
+* **SondePiscine[-Dev]/TempPiscine** : pool's temperature
+
 ## Hardware
 
-* MX1508 H-Bridge
-* 3a77553800000091 : DS2413 - Day light probe
-* ~~28ff8fbf711703c3 : DS18B20 - Water temperature~~
+* ~~MX1508 H-Bridge~~
+* 3a77553800000091 : DS2413 - Day light & water probes
+* 28ff8fbf711703c3 : DS18B20 - Pool temperature
 
 ## Test Bat
 
@@ -69,10 +72,8 @@ I = 5 / 125.1K = ~ 40uA
 | Power | DHT  22 | Water |  1-wire | Closing Door | Opening Door |
 | ----- | ------- | ----- | ------- | ------------ | ------------ |
 | +5 G  | G Dt +3 | Dt G  | G Dt +3 | H  Com  End  |  H Com End   |
-                                      V   O    M      J  B   O
-									  i   r    a      a  l   r
-									  o   a    r      u  e
-									  l   n    r      n  u
+                                         GPIO		    GPIO
+									     012            013
 
 ## Dependencies
 

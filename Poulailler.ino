@@ -62,6 +62,11 @@ NetMQTT nMQTT(
 	* Handle MQTT
 	***/
 bool func_status( const String & ){
+		/* Notez-bien : using String is generally a BAD IDEA as leading
+		 * to memory fragmentation.
+		 * Now, it's harmless here as the ESP is reset at every deepsleep 
+		 * wakeup b/w samples acquisition
+		 */
 	String msg = "Délai acquisition : ";
 	msg += delaySampleNest.getConsign();
 	msg += "\nEveil suite à commande : ";
