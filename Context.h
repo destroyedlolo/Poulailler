@@ -7,6 +7,7 @@
 #define CONTEXT_H
 
 #include <KeepInRTC.h>
+#include <OWBus.h> /* 1-wire */
 
 #include "Parameters.h"
 
@@ -17,8 +18,11 @@ class Context : public KeepInRTC::KeepMe {
 		bool debug;					// Debug mode
 	} data;
 
+	OneWire oneWire;
+	OWBus bus;
+
 public:
-	Context(KeepInRTC &kir) : KeepInRTC::KeepMe( kir, (uint32_t *)&this->data, sizeof(this->data) ) {}
+	Context(KeepInRTC &kir) : KeepInRTC::KeepMe( kir, (uint32_t *)&this->data, sizeof(this->data) ), oneWire(ONE_WIRE_BUS), bus(&this->oneWire) {}
 
 		/* Set default values if needed
 		 *	<- true if data have been reseted
