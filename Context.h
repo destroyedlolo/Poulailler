@@ -66,6 +66,10 @@ public:
 	bool getDebug( void ){
 		return this->data.debug;
 	}
+
+	OWBus &getOWBus( void ){ 
+		return this->bus;
+	}
 };
 
 #endif

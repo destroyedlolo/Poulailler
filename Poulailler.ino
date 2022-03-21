@@ -14,7 +14,13 @@
  *
  *		----- V2 ----
  *	08/05/2019 - redesign for v2.
+ *
+ * Notez-bien : using String to concatenate messages is generally a BAD IDEA
+ * as leading to memory fragmentation.
+ * Now, it's harmless here as the ESP is reset at every deepsleep 
+ * wakeup b/w samples acquisition
  */
+
 #include <ESP8266WiFi.h>
 
 extern "C" {
@@ -22,7 +28,6 @@ extern "C" {
 }
 
 #include <Maison.h>		// My very own environment (WIFI_*, MQTT_*, ...)
-#include "Parameters.h"
 
 #include <LFUtilities.h>	// Fake but needed to load LFUtilities
 #include <LFUtilities/Duration.h>	// Duration measurement 
@@ -35,6 +40,8 @@ KeepInRTC kir;	// RTC memory management
 
 #include "Context.h"
 Context ctx(kir);
+
+#include <OWBus/OWDevice.h>
 
 #include <LFUtilities/TemporalConsign.h>
 TemporalConsign delaySampleNest(kir);		// Delay b/w 2 nest sample.
@@ -62,11 +69,6 @@ NetMQTT nMQTT(
 	* Handle MQTT
 	***/
 bool func_status( const String & ){
-		/* Notez-bien : using String is generally a BAD IDEA as leading
-		 * to memory fragmentation.
-		 * Now, it's harmless here as the ESP is reset at every deepsleep 
-		 * wakeup b/w samples acquisition
-		 */
 	String msg = "Délai acquisition : ";
 	msg += delaySampleNest.getConsign();
 	msg += "\nEveil suite à commande : ";
@@ -95,12 +97,38 @@ bool func_status( const String & ){
 	return true;
 }
 
+bool func_1wscan( const String & ){
+	String msg = "Sondes sur le bus : ";
+	msg += ctx.getOWBus().getDeviceCount();
+
+	msg += "\nAdresses individuelles :";
+	OWBus::Address addr;
+	ctx.getOWBus().search_reset();
+	while( ctx.getOWBus().search_next( addr ) ){
+		msg += "\n\t";
+		msg += addr.toString().c_str();
+		msg += " : ";
+		if(!addr.isValid( ctx.getOWBus() ))
+			msg += "Adresse Invalide\n";
+		else {
+			OWDevice probe( ctx.getOWBus(), addr );
+			msg += probe.getFamily();
+			msg += probe.isParasitePowered() ? " (Parasite)" : " (Externe)";
+		}
+	}
+
+	nMQTT.logMsg( msg );
+	return true;
+}
+
 const struct _command {
 	const char *nom;
 	const char *desc;
 	bool (*func)( const String & );	// true : stay awake, reset the timer
 } commands[] = {
 	{ "status", "Configuration courante", func_status },
+	{ "1Wscan",	"Liste les sondes présentent sur le bus 1-wire", func_1wscan },
+
 /*
 	{ "delai", "Délai entre chaque échantillons (secondes)", func_delai },
 	{ "attente", "Attend <n> secondes l'arrivée de nouvelles commandes", func_att },
