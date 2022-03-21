@@ -209,6 +209,8 @@ void setup(){
 	delay(100);
 
 	Serial.println("Hello");
+	Serial.printf("Command : '%s'\n", MQTT_Command.c_str());
+	Serial.printf("Messages : '%s'\n", nMQTT.getMQTTMessageTopic());
 #else
 	pinMode(LED_BUILTIN, OUTPUT);
 #endif
