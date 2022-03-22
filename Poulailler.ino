@@ -223,8 +223,6 @@ void setup(){
 	delay(100);
 
 	Serial.println("Hello");
-	Serial.printf("Command : '%s'\n", MQTT_Command.c_str());
-	Serial.printf("Messages : '%s'\n", nMQTT.getMQTTMessageTopic());
 #else
 	pinMode(LED_BUILTIN, OUTPUT);
 #endif
@@ -232,7 +230,11 @@ void setup(){
 	if( ctx.begin() | delaySample.begin(DEF_SLEEP) | stayWakedInteractive.begin(DEF_WAKED) ){	// single non logical or, otherwise other begin() will never be called
 #ifdef SERIAL_ENABLED
 		Serial.println("Default value");
+		Serial.printf("Command : '%s'\n", MQTT_Command.c_str());
+		Serial.printf("Messages : '%s'\n", nMQTT.getMQTTMessageTopic());
 #endif
+	} else {
+// TODO : initialise delaySample with current Context.wakeuptime
 	}
 
 	if( !nMQTT.connectWiFi() ){	// Will connect to MQTT as well
@@ -247,13 +249,21 @@ void setup(){
 void loop(){
 	nMQTT.loop();
 
-	// *******
-	// TODO : insert here samples mecanismes
-	// *******
+	// Acquire samples ?
+	if( delaySample.isExhausted(millis()/1e3) ){
+#ifdef SERIAL_ENABLED
+		Serial.println("Sampling ...");
+#endif
+		// TODO : bla bla bla
+		
+		// reset sampling counter
+		delaySample.setNext();
+	}
 
 		// ready to go to sleep ?
 		// check if we are still waiting for commands
 	if( millis()/1e3 < stayWakedInteractive.getNext() ){
+			delay(500);	// Wait 0.5s before next mqtt checking
 	} else {	// No activities for a long time, going to sleep
 
 			// Determine when we'll have to do next sample
@@ -269,8 +279,14 @@ void loop(){
 			Serial.printf("Sleep for %ld sec\n", next);
 #endif
 //			ESP.deepSleep( next * 1e3 ); // because deepsleep is in uS
-			delay(10e3);	// Fake for testing purgpose
-		} else	// It's already time for the next sample
+			delay(10e3);	// Fake for testing purpose
+		} else {	// It's already time for the next sample
+#ifdef SERIAL_ENABLED
+			Serial.println("No, it's already time for the next sample");
+#endif
+
+// TODO : change to 0.5s
 			delay(5e3);	// Wait 5s before next mqtt checking
+		}
 	}
 }
