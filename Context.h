@@ -31,16 +31,22 @@ public:
 		if( !kir.isValid() ){
 			this->data.wakeuptime = 0;
 			this->data.verbose = DEF_VERBOSITY;
+#		ifdef DEV
+			this->data.debug = true;
+#		else
 			this->data.debug = false;
+#endif
 			this->save();
 			return true;
 		}
 		return false;
 	}
 
-		/* Sleep management */
+		/* Sleep management
+		 *	<- howlong to sleep (in secondes)
+		 */
 	void deepSleep( unsigned long howlong ){
-		this->data.wakeuptime += millis()/1e3;	// Add the time already spent
+		this->data.wakeuptime += millis()/1e3;	// Add the seconds already spent
 		this->data.wakeuptime += howlong;		// Add sleep duration
 		this->save();
 

@@ -34,4 +34,6 @@ public :
 	}
 };
 
+extern NetMQTT nMQTT;
+
 #endif

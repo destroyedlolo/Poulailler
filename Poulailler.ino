@@ -43,8 +43,9 @@ Context ctx(kir);
 
 #include <OWBus/OWDevice.h>
 
+	/* Notez-bien : time are stored in Seconds */
 #include <LFUtilities/TemporalConsign.h>
-TemporalConsign delaySampleNest(kir);		// Delay b/w 2 nest sample.
+TemporalConsign delaySample(kir);		// Delay b/w 2 nest sample.
 TemporalConsign stayWakedInteractive(kir);	// How long to stay waked in interactive mode
 
 	/***
@@ -66,14 +67,18 @@ NetMQTT nMQTT(
 );
 
 	/***
-	* Handle MQTT
-	***/
+	* Commande line
+	****/
+
+#include "CommandLine.h"
+CommandLine cmdline;
+
 bool func_status( const String & ){
 	String msg = "Délai acquisition : ";
-	msg += delaySampleNest.getConsign();
-	msg += "\nEveil suite à commande : ";
+	msg += delaySample.getConsign();
+	msg += "S\nEveil suite à commande : ";
 	msg += stayWakedInteractive.getConsign();
-	msg += ctx.getDebug() ? "\nMessages de Debug" : "\nPas de message de Debug";
+	msg += ctx.getDebug() ? "S\nMessages de Debug" : "ms\nPas de message de Debug";
 #ifdef DEV
 	msg += "\nFlash : ";
 	msg += ESP.getFlashChipSize();
@@ -140,19 +145,7 @@ const struct _command {
 	{ NULL, NULL, NULL }
 };
 
-void handleMQTT(char* topic, byte* payload, unsigned int length){
-	String cmd;
-	for(unsigned int i=0;i<length;i++)
-		cmd += (char)payload[i];
-
-#	ifdef SERIAL_ENABLED
-	Serial.print( "Message [" );
-	Serial.print( topic );
-	Serial.print( "] : '" );
-	Serial.print( cmd );
-	Serial.println( "'" );
-#	endif
-
+void CommandLine::exec( String &cmd ){	// Commands parsing
 	/* Split the command and its argument */
 	const int idx = cmd.indexOf(' ');
 	String arg;
@@ -160,7 +153,7 @@ void handleMQTT(char* topic, byte* payload, unsigned int length){
 		arg = cmd.substring(idx + 1);
 		cmd = cmd.substring(0, idx);
 	}
-
+	
 	bool keepinteractive = true;	// We stay in interactive mode
 	if(cmd == "?"){	// return the list of known commands
 		String rep;
@@ -196,8 +189,29 @@ void handleMQTT(char* topic, byte* payload, unsigned int length){
 		stayWakedInteractive.setNext( millis() + stayWakedInteractive.getConsign() * 1e3 );
 	} else { // We have to go to sleep
 		stayWakedInteractive.setNext(0);
+		this->finished();
 	}
 }
+
+	/***
+	* Handle MQTT
+	***/
+void handleMQTT(char* topic, byte* payload, unsigned int length){
+	String cmd;
+	for(unsigned int i=0;i<length;i++)
+		cmd += (char)payload[i];
+
+#	ifdef SERIAL_ENABLED
+	Serial.print( "Message [" );
+	Serial.print( topic );
+	Serial.print( "] : '" );
+	Serial.print( cmd );
+	Serial.println( "'" );
+#	endif
+
+	cmdline.exec( cmd );
+}
+
 
 	/***
 	* Let's go
@@ -215,7 +229,7 @@ void setup(){
 	pinMode(LED_BUILTIN, OUTPUT);
 #endif
 
-	if( ctx.begin() | delaySampleNest.begin(DEF_NESTSLEEP) | stayWakedInteractive.begin(DEF_WAKED) ){	// single non logical or, otherwise other begin() will never be called
+	if( ctx.begin() | delaySample.begin(DEF_SLEEP) | stayWakedInteractive.begin(DEF_WAKED) ){	// single non logical or, otherwise other begin() will never be called
 #ifdef SERIAL_ENABLED
 		Serial.println("Default value");
 #endif
@@ -225,7 +239,7 @@ void setup(){
 #ifdef SERIAL_ENABLED
 		Serial.println("Unable to connect to the network ... will be back !");
 #endif
-		ctx.deepSleep( delaySampleNest.getConsign() );	// sleep till next try
+		ctx.deepSleep( delaySample.getConsign() );	// sleep till next try
 	}
 	nMQTT.begin( MQTT_Command.c_str(), handleMQTT );
 }
@@ -233,20 +247,30 @@ void setup(){
 void loop(){
 	nMQTT.loop();
 
-	if( stayWakedInteractive.getNext() < millis() ){	// No activities for too long
+	// *******
+	// TODO : insert here samples mecanismes
+	// *******
+
+		// ready to go to sleep ?
+		// check if we are still waiting for commands
+	if( millis()/1e3 < stayWakedInteractive.getNext() ){
+	} else {	// No activities for a long time, going to sleep
+
+			// Determine when we'll have to do next sample
+		long next = delaySample.getNext() - millis()/1000;
 #ifdef SERIAL_ENABLED
-		Serial.println( "Dodo ..." );
+		Serial.printf( "Dodo ...(next : %lu, millis %lu [%ld])\n",
+			delaySample.getNext(), millis()/1000, next
+		);
 #endif
-		long next = delaySampleNest.getNext() - millis();	// Time of the next sample
+
 		if(next > 0){
 #ifdef SERIAL_ENABLED
-			Serial.print("Sleep for ");
-			Serial.print(next);
-			Serial.println("ms ...");
+			Serial.printf("Sleep for %ld sec\n", next);
 #endif
 //			ESP.deepSleep( next * 1e3 ); // because deepsleep is in uS
 			delay(10e3);	// Fake for testing purgpose
-		} else
+		} else	// It's already time for the next sample
 			delay(5e3);	// Wait 5s before next mqtt checking
 	}
 }
