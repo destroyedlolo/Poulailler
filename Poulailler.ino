@@ -303,8 +303,7 @@ void loop(){
 #ifdef SERIAL_ENABLED
 			Serial.printf("Sleep for %ld sec\n", next);
 #endif
-//			ESP.deepSleep( next * 1e3 ); // because deepsleep is in uS
-			delay(10000);	// Fake for testing purpose
+			ctx.deepSleep( next );
 		} else {	// It's already time for the next sample
 #ifdef SERIAL_ENABLED
 			Serial.println("No, it's already time for the next sample");
