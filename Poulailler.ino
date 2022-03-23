@@ -185,9 +185,9 @@ void CommandLine::exec( String &cmd ){	// Commands parsing
 		}
 	}
 
-	if(keepinteractive){ // Reset the waked timer
-		stayWakedInteractive.setNext( millis() + stayWakedInteractive.getConsign() * 1e3 );
-	} else { // We have to go to sleep
+	if(keepinteractive) // Reset the waked timer
+		stayWakedInteractive.restart( millis() / 1000 );
+	else { // We have to go to sleep
 		stayWakedInteractive.setNext(0);
 		this->finished();
 	}
@@ -249,8 +249,10 @@ void setup(){
 	nMQTT.begin( MQTT_Command.c_str(), handleMQTT );
 
 	if( !wakeup ){	// starting, let a chance for interactive command
-		stayWakedInteractive.setNext( millis()/1e3 );	// reset to current time
-		stayWakedInteractive.setNext();					// add the consign
+#ifdef SERIAL_ENABLED
+		Serial.println("starting");
+#endif
+		stayWakedInteractive.restart( millis()/1000 );	// reset the delay to the current time
 	}
 }
 
@@ -258,7 +260,7 @@ void loop(){
 	nMQTT.loop();
 
 	// Acquire samples ?
-	if( delaySample.isExhausted(millis()/1e3) ){
+	if( delaySample.isExhausted(millis()/1000) ){
 #ifdef SERIAL_ENABLED
 		Serial.println("Sampling ...");
 #endif
@@ -270,14 +272,21 @@ void loop(){
 
 
 #ifdef SERIAL_ENABLED
-	
+	if( Serial.available() ){
+		if( !cmdline.isActive() ){	// entering interactive mode
+			cmdline.enter();
+			return;
+		} else	// Process commands
+			cmdline.readSerial();
+	}
 #endif
 
 		// ready to go to sleep ?
 		// check if we are still waiting for commands
-	if( millis()/1e3 < stayWakedInteractive.getNext() ){
+	if(  !stayWakedInteractive.isExhausted(millis()/1000) ){
 #ifdef SERIAL_ENABLED
-Serial.printf("Interactive (%d)...", stayWakedInteractive.getNext() - millis()/1e3);
+		if( ctx.getDebug() )
+			Serial.printf("Interactive (%d)...\n", stayWakedInteractive.getNext() - millis()/1000);
 #endif
 			delay(500);	// Wait 0.5s before next mqtt checking
 	} else {	// No activities for a long time, going to sleep
@@ -295,14 +304,12 @@ Serial.printf("Interactive (%d)...", stayWakedInteractive.getNext() - millis()/1
 			Serial.printf("Sleep for %ld sec\n", next);
 #endif
 //			ESP.deepSleep( next * 1e3 ); // because deepsleep is in uS
-			delay(10e3);	// Fake for testing purpose
+			delay(10000);	// Fake for testing purpose
 		} else {	// It's already time for the next sample
 #ifdef SERIAL_ENABLED
 			Serial.println("No, it's already time for the next sample");
 #endif
-
-// TODO : change to 0.5s
-			delay(5e3);	// Wait 5s before next mqtt checking
+			delay(500);	// Wait 0.5s before next mqtt checking
 		}
 	}
 }
