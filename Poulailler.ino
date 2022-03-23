@@ -218,6 +218,8 @@ void handleMQTT(char* topic, byte* payload, unsigned int length){
 	****/
 
 void setup(){
+	bool wakeup = true;		// wakeup or starting ?
+
 #ifdef SERIAL_ENABLED
 	Serial.begin(115200);
 	delay(100);
@@ -232,6 +234,7 @@ void setup(){
 		Serial.println("Default value");
 		Serial.printf("Command : '%s'\n", MQTT_Command.c_str());
 		Serial.printf("Messages : '%s'\n", nMQTT.getMQTTMessageTopic());
+		wakeup = false;
 #endif
 	} else {
 // TODO : initialise delaySample with current Context.wakeuptime
@@ -244,6 +247,11 @@ void setup(){
 		ctx.deepSleep( delaySample.getConsign() );	// sleep till next try
 	}
 	nMQTT.begin( MQTT_Command.c_str(), handleMQTT );
+
+	if( !wakeup ){	// starting, let a chance for interactive command
+		stayWakedInteractive.setNext( millis()/1e3 );	// reset to current time
+		stayWakedInteractive.setNext();					// add the consign
+	}
 }
 
 void loop(){
@@ -260,9 +268,17 @@ void loop(){
 		delaySample.setNext();
 	}
 
+
+#ifdef SERIAL_ENABLED
+	
+#endif
+
 		// ready to go to sleep ?
 		// check if we are still waiting for commands
 	if( millis()/1e3 < stayWakedInteractive.getNext() ){
+#ifdef SERIAL_ENABLED
+Serial.printf("Interactive (%d)...", stayWakedInteractive.getNext() - millis()/1e3);
+#endif
 			delay(500);	// Wait 0.5s before next mqtt checking
 	} else {	// No activities for a long time, going to sleep
 
