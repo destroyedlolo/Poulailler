@@ -102,6 +102,11 @@ bool func_status( const String & ){
 	return true;
 }
 
+bool func_reboot( const String & ){
+	ESP.restart();
+	return true;
+}
+
 bool func_1wscan( const String & ){
 	String msg = "Sondes sur le bus : ";
 	msg += ctx.getOWBus().getDeviceCount();
@@ -132,6 +137,7 @@ const struct _command {
 	bool (*func)( const String & );	// true : stay awake, reset the timer
 } commands[] = {
 	{ "status", "Configuration courante", func_status },
+	{ "reboot", "Redemarre l'ESP", func_reboot },
 	{ "1Wscan",	"Liste les sondes présentent sur le bus 1-wire", func_1wscan },
 
 /*
@@ -240,6 +246,7 @@ void setup(){
 // TODO : initialise delaySample with current Context.wakeuptime
 	}
 
+	LED(LOW);
 	if( !nMQTT.connectWiFi() ){	// Will connect to MQTT as well
 #ifdef SERIAL_ENABLED
 		Serial.println("Unable to connect to the network ... will be back !");
@@ -247,6 +254,7 @@ void setup(){
 		ctx.deepSleep( delaySample.getConsign() );	// sleep till next try
 	}
 	nMQTT.begin( MQTT_Command.c_str(), handleMQTT );
+	LED(HIGH);
 
 	if( !wakeup ){	// starting, let a chance for interactive command
 #ifdef SERIAL_ENABLED
@@ -303,6 +311,7 @@ void loop(){
 #ifdef SERIAL_ENABLED
 			Serial.printf("Sleep for %ld sec\n", next);
 #endif
+			nMQTT.disconnect();
 			ctx.deepSleep( next );
 		} else {	// It's already time for the next sample
 #ifdef SERIAL_ENABLED
