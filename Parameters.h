@@ -50,6 +50,7 @@
 String MQTT_Topic(MQTT_CLIENT);	// Topic's root
 String MQTT_Error = MQTT_Topic + "/Error";
 String MQTT_Command = MQTT_Topic + "/Command";
+String MQTT_VCC = MQTT_Topic + "/Alim";
 
 	/* GPIOs */
 #define AUXPWR_GPIO	0 /* Power auxiliaries, on prod 0 */

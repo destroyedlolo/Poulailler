@@ -23,9 +23,14 @@
 
 #include <ESP8266WiFi.h>
 
+#include "Parameters.h"
+
 extern "C" {
   #include "user_interface.h"
 }
+#ifdef DEV
+ADC_MODE(ADC_VCC);	// Read internal Vcc
+#endif
 
 #include <Maison.h>		// My very own environment (WIFI_*, MQTT_*, ...)
 
@@ -264,16 +269,60 @@ void setup(){
 	}
 }
 
+int getAlim( void ){
+#ifdef DEV
+	return( ESP.getVcc() );
+#else
+	return( analogRead(A0)*5 );
+#endif
+}
+
 void loop(){
 	nMQTT.loop();
 
 	// Acquire samples ?
 	if( delaySample.isExhausted(millis()/1000) ){
+		int vcctab[3];	// store different samples of Vcc
+		int nbre = 0;
+
+		vcctab[nbre++] = getAlim();
+
 #ifdef SERIAL_ENABLED
 		Serial.println("Sampling ...");
 #endif
-		// TODO : bla bla bla
-		
+
+		vcctab[nbre++] = getAlim();
+	
+		// TODO : add probes code
+
+		vcctab[nbre++] = getAlim();
+
+		// sort Vcc values
+		for( int i = 0; i<nbre; i++ )
+			for( int j = 0; j<nbre; j++ ){
+				if(vcctab[i]>vcctab[j]){
+					int t = vcctab[i];
+			    	vcctab[i] = vcctab[j];
+				    vcctab[j] = t;
+				}
+		}
+
+		if( ctx.getDebug() ){
+			String msg(nbre);
+			msg += " Vcc sample :";
+			for( int i=0; i<nbre; i++ ){
+				msg += " ";
+				msg += vcctab[i];
+			}
+			nMQTT.logMsg( msg );
+		}
+
+#ifdef SERIAL_ENABLED
+		Serial.print("selected Vcc :");
+		Serial.println( vcctab[nbre/2] );
+#endif
+		nMQTT.publish( MQTT_VCC, vcctab[nbre/2] );
+
 		// reset sampling counter
 		delaySample.setNext();
 	}
