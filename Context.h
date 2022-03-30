@@ -76,6 +76,53 @@ public:
 	OWBus &getOWBus( void ){ 
 		return this->bus;
 	}
+
+
+	/********
+	 * Helpers
+	 ********/
+
+	String toString( float number, uint8_t digits=2){	// Largely inspired by Print::printFloat()
+		String res;
+
+		if (isnan(number)) return "nan";
+		if (isinf(number)) return "inf";
+
+		bool negative = false;
+		if(number < 0.0){
+			number = -number;
+			negative = true;
+		}
+
+			// Round correctly so that print(1.999, 2) prints as "2.00"
+		float rounding = 0.5;
+		for (uint8_t i=0; i<digits; ++i)
+			rounding /= 10.0;
+		number += rounding;
+
+		unsigned long int_part = (unsigned long)number;
+		float remainder = number - (float)int_part;
+
+		do {
+			char c = int_part % 10;
+			int_part /= 10;
+
+			res = (char)(c+'0') + res;
+		} while( int_part );
+		
+		if( negative )
+			res = '-' + res;
+
+		res += '.';
+
+		if( digits ) while(digits--){
+			remainder *= 10.0;
+			res += (char)((char)remainder + '0');
+			remainder -= (int)remainder;
+		}
+
+		return res;
+	}
 };
 
 #endif

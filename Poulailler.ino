@@ -72,6 +72,14 @@ NetMQTT nMQTT(
 );
 
 	/***
+	* Modules
+	****/
+
+#include "Perchoir.h"
+
+Perchoir perchoir( ctx );
+
+	/***
 	* Commande line
 	****/
 
@@ -136,6 +144,15 @@ bool func_1wscan( const String & ){
 	return true;
 }
 
+bool func_pub( const String &dev ){
+	if(dev == "perch")
+		perchoir.action();
+	else
+		nMQTT.logMsg( "Argument de pub incorrect" );
+
+	return true;
+}
+
 const struct _command {
 	const char *nom;
 	const char *desc;
@@ -144,6 +161,7 @@ const struct _command {
 	{ "status", "Configuration courante", func_status },
 	{ "reboot", "Redemarre l'ESP", func_reboot },
 	{ "1Wscan",	"Liste les sondes présentent sur le bus 1-wire", func_1wscan },
+	{ "pub", "Echantillonne et publie les données", func_pub },
 
 /*
 	{ "delai", "Délai entre chaque échantillons (secondes)", func_delai },
@@ -343,7 +361,7 @@ void loop(){
 	if(  !stayWakedInteractive.isExhausted(millis()/1000) ){
 #ifdef SERIAL_ENABLED
 		if( ctx.getDebug() )
-			Serial.printf("Interactive (%d)...\n", stayWakedInteractive.getNext() - millis()/1000);
+			Serial.printf("Interactive (%lu)...\n", stayWakedInteractive.getNext() - millis()/1000);
 #endif
 			delay(500);	// Wait 0.5s before next mqtt checking
 	} else {	// No activities for a long time, going to sleep
