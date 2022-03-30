@@ -147,8 +147,9 @@ bool func_1wscan( const String & ){
 bool func_pub( const String &dev ){
 	if(dev == "perch")
 		perchoir.action();
-	else
-		nMQTT.logMsg( "Argument de pub incorrect" );
+	else {
+		perchoir.action();
+	}
 
 	return true;
 }
@@ -161,7 +162,7 @@ const struct _command {
 	{ "status", "Configuration courante", func_status },
 	{ "reboot", "Redemarre l'ESP", func_reboot },
 	{ "1Wscan",	"Liste les sondes présentent sur le bus 1-wire", func_1wscan },
-	{ "pub", "Echantillonne et publie les données", func_pub },
+	{ "pub", "pub [perch] : Echantillonne et publie les données", func_pub },
 
 /*
 	{ "delai", "Délai entre chaque échantillons (secondes)", func_delai },
@@ -311,7 +312,7 @@ void loop(){
 
 		vcctab[nbre++] = getAlim();
 	
-		// TODO : add probes code
+		perchoir.action();
 
 		vcctab[nbre++] = getAlim();
 

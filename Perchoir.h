@@ -60,7 +60,7 @@ public :
 			return;
 		}
 
-		String troot = MQTT_Topic + "Perchoir/";
+		String troot = MQTT_Topic + "/Perchoir/";
 
 		String tpc = troot + "Temperature";
 		nMQTT.publish( tpc, context.toString( this->temperature ).c_str() );
