@@ -83,6 +83,9 @@ public :
 		msg += this->temperature;
 		msg += "° ";
 		msg += this->humidite;
+		msg += " (";
+		msg += this->strerror();
+		msg += ")";
 		nMQTT.logMsg(msg);
 	}
 
