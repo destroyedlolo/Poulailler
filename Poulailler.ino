@@ -47,6 +47,7 @@ KeepInRTC kir;	// RTC memory management
 Context ctx(kir);
 
 #include <OWBus/OWDevice.h>
+#include <OWBus/DS18B20.h>
 
 	/* Notez-bien : time are stored in Seconds */
 #include <LFUtilities/TemporalConsign.h>
@@ -78,6 +79,7 @@ NetMQTT nMQTT(
 #include "Perchoir.h"
 
 Perchoir perchoir( ctx );
+float getSondePiscine( bool publish=true );
 
 	/***
 	* Commande line
@@ -107,11 +109,24 @@ bool func_status( const String & ){
 	msg += ESP.getFreeHeap();
 	msg += "\nAdresse IP :";
 	msg += WiFi.localIP().toString();
-
 /*
 	msg += OTA ? "\nOTA en attente": "\nOTA désactivé";
 */
+
+	msg += "\n\nSondes:";
+	msg += "\nAlimentation : " + String(getAlim());
 	nMQTT.logMsg( msg );
+
+	perchoir.status();
+	
+	float tpiscine = getSondePiscine(false);
+	msg = "Piscine : ";
+	if( tpiscine != 99.99 )
+		msg += tpiscine;
+	else
+		msg += "absente";
+	nMQTT.logMsg( msg );
+
 	return true;
 }
 
@@ -149,6 +164,7 @@ bool func_pub( const String &dev ){
 		perchoir.action();
 	else {
 		perchoir.action();
+		getSondePiscine();
 	}
 
 	return true;
@@ -296,6 +312,25 @@ int getAlim( void ){
 #endif
 }
 
+float getSondePiscine( bool publish ){
+	DS18B20 SondePiscine( ctx.getOWBus(), 0x28ff8fbf711703c3);
+	
+	float temp = SondePiscine.getTemperature( true );
+	if( SondePiscine.isValidScratchpad() ){	// Is the probe present ?
+		if( publish ){
+			String tpc = MQTT_Topic + "/Piscine";
+			nMQTT.publish( tpc, temp );
+		}
+		return temp;
+	} else {
+#ifdef SERIAL_ENABLED
+		Serial.println("Sonde piscine absente");
+#endif
+		
+		return 99.99;
+	}
+}
+
 void loop(){
 	nMQTT.loop();
 
@@ -307,8 +342,10 @@ void loop(){
 		vcctab[nbre++] = getAlim();
 
 #ifdef SERIAL_ENABLED
-		Serial.println("Sampling ...");
+		Serial.println("Échantillonnage ...");
 #endif
+
+		getSondePiscine( true );
 
 		vcctab[nbre++] = getAlim();
 	
